@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { MapPin, Camera, Upload, CheckCircle2, User, Gift, Target, Coins, Star, Shield, Clock, ChevronRight, TrendingUp, AlertTriangle, FileText, Eye, Lock, ShieldAlert, ImageIcon, Shuffle } from "lucide-react";
+import Image from "next/image";
 
 // --- Types ---
 type TaskType = 'existence' | 'quality' | 'progress';
@@ -534,9 +535,8 @@ export default function MobilePwaScreen() {
         {/* App Header */}
         <div className="pt-12 pb-3 px-5 bg-white flex justify-between items-center shadow-sm relative z-40 border-b border-slate-50">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-[#0D1B3E] text-white rounded-full flex items-center justify-center font-bold relative">
-              <span className="text-[#DFA000] text-sm absolute -top-1 -right-1 bg-white rounded-full p-0.5"><Coins className="w-4 h-4" /></span>
-              A
+            <div className="w-10 h-10 rounded-lg overflow-hidden shrink-0 shadow-sm">
+              <Image src="/logo.png" alt="KAWAL RUPIAH" width={40} height={40} />
             </div>
             <div>
               <p className="text-[#0D1B3E] font-bold leading-none tracking-tight">KAWAL RUPIAH</p>

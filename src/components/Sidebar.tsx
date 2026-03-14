@@ -1,6 +1,7 @@
 'use client'
 
-import { LayoutDashboard, FileSpreadsheet, Fingerprint, Smartphone, Settings, BarChart2, Bell } from "lucide-react";
+import { LayoutDashboard, FileSpreadsheet, Fingerprint, Smartphone, Settings, BarChart2 } from "lucide-react";
+import Image from "next/image";
 import clsx from "clsx";
 
 interface SidebarProps {
@@ -21,14 +22,8 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
   return (
     <div className="w-64 bg-navy h-screen text-white flex flex-col fixed left-0 top-0 border-r border-[#1a2f5e]">
       <div className="p-6 border-b border-[#1a2f5e] flex items-center mb-4">
-        <div className="relative w-8 h-8 mr-3 flex items-center justify-center bg-gold/10 rounded overflow-hidden">
-          <div className="absolute inset-0 bg-gold/20 flex items-center justify-center rounded">
-            <span className="text-gold font-bold text-xs" style={{transform: "scale(0.8)"}}>Rp</span>
-            <svg viewBox="0 0 24 24" fill="none" className="absolute top-0 opacity-20 text-gold w-full h-full" stroke="currentColor" strokeWidth="2">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-            </svg>
-          </div>
-          <Fingerprint className="w-5 h-5 text-gold z-10" />
+        <div className="relative w-10 h-10 mr-3 shrink-0">
+          <Image src="/logo.png" alt="KAWAL RUPIAH" width={40} height={40} className="rounded" />
         </div>
         <div>
           <h1 className="text-lg font-bold tracking-tight text-white leading-tight">KAWAL<br/>RUPIAH</h1>
