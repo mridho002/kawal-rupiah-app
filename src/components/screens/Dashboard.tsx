@@ -154,8 +154,8 @@ export default function DashboardScreen({ setActiveTab }: { setActiveTab: (tab: 
             </div>
 
             <div className="bg-red-50 rounded-lg p-3 text-sm -mx-1 border border-red-100/50">
-              <p className="font-semibold text-[#0D1B3E] mb-1">AI Kesimpulan:</p>
-              <p className="text-slate-700 leading-snug">Harga Rp 25.4Jt berada **+51%** di atas harga wajar LKPP (Rp 18.2Jt). Indikasi kuat mark-up sebelum dianggarkan.</p>
+              <p className="font-semibold text-[#0D1B3E] mb-1 text-xs">🤖 AI Kesimpulan:</p>
+              <p className="text-slate-700 leading-snug text-xs">Harga Rp 25.4Jt berada <strong className="text-[#C0392B]">+51%</strong> di atas harga wajar LKPP (Rp 18.2Jt). Dengan qty <strong>492 unit</strong>, potensi kerugian negara <strong className="text-[#C0392B]">Rp 4.2 Miliar</strong>. Indikasi kuat mark-up.</p>
             </div>
 
             <div className="mt-auto pt-5">
