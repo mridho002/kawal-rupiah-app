@@ -2,17 +2,25 @@
 
 import { useState } from "react";
 import { Search, Filter, Download, ArrowUpRight, AlertCircle, CheckCircle } from "lucide-react";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from "recharts";
+
+const tableData = [
+  { id: 1, item: "Laptop Core i7 16GB", propNum: 25.4, ekatNum: 16.8, prop: "Rp 25.400.000", ekat: "Rp 16.800.000", diff: "+51%", status: "ANOMALI" },
+  { id: 2, item: "Beton K-350 / m3", propNum: 1.15, ekatNum: 1.1, prop: "Rp 1.150.000", ekat: "Rp 1.100.000", diff: "+4.5%", status: "NORMAL" },
+  { id: 3, item: "Aspal Hotmix AC-WC", propNum: 2.1, ekatNum: 1.45, prop: "Rp 2.100.000", ekat: "Rp 1.450.000", diff: "+44%", status: "ANOMALI" },
+  { id: 4, item: "ATK Kantor Set", propNum: 0.45, ekatNum: 0.42, prop: "Rp 450.000", ekat: "Rp 420.000", diff: "+7%", status: "NORMAL" },
+  { id: 5, item: "Sewa Bus Medium", propNum: 3.5, ekatNum: 2.2, prop: "Rp 3.500.000", ekat: "Rp 2.200.000", diff: "+59%", status: "ANOMALI" },
+];
 
 export default function PriceOracleScreen() {
-  const tableData = [
-    { id: 1, item: "Laptop Core i7 16GB", prop: "Rp 25.400.000", ekat: "Rp 16.800.000", diff: "+51%", status: "ANOMALI" },
-    { id: 2, item: "Beton K-350 / m3", prop: "Rp 1.150.000", ekat: "Rp 1.100.000", diff: "+4.5%", status: "NORMAL" },
-    { id: 3, item: "Aspal Hotmix AC-WC", prop: "Rp 2.100.000", ekat: "Rp 1.450.000", diff: "+44%", status: "ANOMALI" },
-    { id: 4, item: "ATK Kantor Set", prop: "Rp 450.000", ekat: "Rp 420.000", diff: "+7%", status: "NORMAL" },
-    { id: 5, item: "Sewa Bus Medium", prop: "Rp 3.500.000", ekat: "Rp 2.200.000", diff: "+59%", status: "ANOMALI" },
-  ];
-
   const [selectedRow, setSelectedRow] = useState(1);
+  const selected = tableData.find(r => r.id === selectedRow) ?? tableData[0];
+  const isAnomaliSelected = selected.status === "ANOMALI";
+
+  const chartData = [
+    { name: "Diajukan", value: selected.propNum },
+    { name: "e-Katalog", value: selected.ekatNum },
+  ];
 
   return (
     <div className="space-y-6 max-w-full pb-20">
@@ -26,7 +34,7 @@ export default function PriceOracleScreen() {
             <Filter className="w-4 h-4" />
             <span>Filter Kategori</span>
           </button>
-          <button className="flex items-center space-x-2 px-4 py-2 bg-white border border-[#DFA000] text-[#DFA000] rounded-lg hover:bg-gold/5 transition-colors text-sm font-medium">
+          <button className="flex items-center space-x-2 px-4 py-2 bg-white border border-[#DFA000] text-[#DFA000] rounded-lg hover:bg-amber-50 transition-colors text-sm font-medium">
             <Download className="w-4 h-4" />
             <span>Export CSV</span>
           </button>
@@ -36,15 +44,15 @@ export default function PriceOracleScreen() {
       <div className="bg-white rounded-xl shadow-[0_2px_8px_rgba(13,27,62,0.04)] border border-slate-100 p-6">
         <div className="relative mb-6">
           <Search className="absolute left-4 top-3 h-5 w-5 text-slate-400" />
-          <input 
-            type="text" 
-            placeholder="Cari item pengadaan, spesifikasi, atau nama daerah..." 
+          <input
+            type="text"
+            placeholder="Cari item pengadaan, spesifikasi, atau nama daerah..."
             className="w-full pl-12 pr-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white text-sm focus:outline-none focus:ring-2 focus:ring-[#0069D9]/20 focus:border-[#0069D9] transition-all"
           />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Table Section */}
+          {/* Table */}
           <div className="lg:col-span-2 border border-slate-200 rounded-xl overflow-hidden">
             <table className="w-full text-left border-collapse">
               <thead>
@@ -61,12 +69,13 @@ export default function PriceOracleScreen() {
                   const isAnomali = row.status === "ANOMALI";
                   const isSelected = selectedRow === row.id;
                   return (
-                    <tr 
-                      key={row.id} 
+                    <tr
+                      key={row.id}
                       onClick={() => setSelectedRow(row.id)}
                       className={`cursor-pointer transition-colors ${
-                        isSelected ? (isAnomali ? 'bg-red-50/80 ring-1 ring-inset ring-red-200' : 'bg-green-50/80 ring-1 ring-inset ring-green-200') : 
-                        isAnomali ? 'hover:bg-red-50/30' : 'hover:bg-slate-50'
+                        isSelected
+                          ? isAnomali ? 'bg-red-50/80 ring-1 ring-inset ring-red-200' : 'bg-green-50/80 ring-1 ring-inset ring-green-200'
+                          : isAnomali ? 'hover:bg-red-50/30' : 'hover:bg-slate-50'
                       }`}
                     >
                       <td className="py-4 px-4 font-semibold text-[#0D1B3E] text-sm">{row.item}</td>
@@ -87,51 +96,50 @@ export default function PriceOracleScreen() {
                         </span>
                       </td>
                     </tr>
-                  )
+                  );
                 })}
               </tbody>
             </table>
           </div>
 
-          {/* Right Detail Chart Panel */}
-          <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm flex flex-col h-full">
+          {/* Right Detail Panel with Recharts */}
+          <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm flex flex-col">
             <h3 className="font-bold text-[#0D1B3E] mb-1">Analisis Perbandingan</h3>
-            <p className="text-xs text-slate-500 mb-6 font-mono">ID: #ORD-LPT-2026-X11</p>
-            
-            {/* Visual Bar Chart comparing values */}
-            <div className="flex-1 flex flex-col items-center justify-center p-4">
-              <div className="flex items-end justify-center space-x-6 w-full h-48 border-b-2 border-slate-100 pb-2 relative">
-                {/* Proposed Value Bar */}
-                <div className="flex flex-col items-center group w-1/3">
-                  <div className="text-xs font-bold text-[#C0392B] mb-2 opacity-0 group-hover:opacity-100 transition-opacity absolute -top-4">Rp 25.4 M</div>
-                  <div className="w-16 bg-[#C0392B] rounded-t-sm shadow-inner transition-all duration-700 ease-out" style={{height: '95%'}}></div>
-                  <div className="text-xs font-semibold text-slate-600 mt-3 text-center">Harga <br/> Diajukan</div>
-                </div>
+            <p className="text-xs text-slate-500 mb-1 font-mono">ID: #ORD-LPT-2026-X11</p>
+            <p className="text-sm font-semibold text-[#0D1B3E] mb-4 truncate">{selected.item}</p>
 
-                {/* Vertical Line indicator */}
-                <div className="absolute top-1/2 left-0 w-full border-t border-dashed border-slate-300 -z-10">
-                  <span className="absolute -top-3 right-0 text-[10px] text-slate-400 bg-white px-1 font-mono">Median LKPP</span>
-                </div>
-
-                {/* Katalog Value Bar */}
-                <div className="flex flex-col items-center group w-1/3">
-                  <div className="text-xs font-bold text-[#DFA000] mb-2 opacity-0 group-hover:opacity-100 transition-opacity absolute top-[30%]">Rp 16.8 M</div>
-                  <div className="w-16 bg-[#DFA000] rounded-t-sm shadow-inner transition-all duration-700 ease-out" style={{height: '60%'}}></div>
-                  <div className="text-xs font-semibold text-slate-600 mt-3 text-center">Rata-rata <br/> e-Katalog</div>
-                </div>
-              </div>
+            <div className="h-52 w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 5 }}>
+                  <XAxis dataKey="name" tick={{ fontSize: 11, fill: '#64748B' }} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fontSize: 10, fill: '#64748B' }} axisLine={false} tickLine={false} tickFormatter={(v) => `${v}Jt`} />
+                  <Tooltip
+                    contentStyle={{ borderRadius: '8px', border: '1px solid #E2E8F0', fontSize: '12px' }}
+                    formatter={(value) => [`${value} Juta`, 'Harga']}
+                  />
+                  <Bar dataKey="value" radius={[6, 6, 0, 0]} barSize={48}>
+                    <Cell key="c0" fill={isAnomaliSelected ? '#C0392B' : '#27AE60'} />
+                    <Cell key="c1" fill="#0069D9" />
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
             </div>
 
-            <div className="mt-8 bg-slate-50 p-4 rounded-lg border border-slate-100 relative">
-              <p className="text-xs text-slate-600 leading-relaxed font-medium">
-                Sistem AI mendeteksi mark-up sebesar <strong className="text-[#C0392B]">+51%</strong> untuk item <strong className="text-navy">Laptop Core i7 16GB</strong> dibandingkan dengan riwayat transaksi pengadaan e-Katalog se-Provinsi Jawa Barat dalam 12 bulan terakhir.
-              </p>
+            <div className={`mt-4 p-4 rounded-lg border text-xs leading-relaxed font-medium ${
+              isAnomaliSelected ? 'bg-red-50 border-red-100 text-slate-700' : 'bg-green-50 border-green-100 text-slate-700'
+            }`}>
+              {isAnomaliSelected
+                ? <>Sistem AI mendeteksi mark-up sebesar <strong className="text-[#C0392B]">{selected.diff}</strong> untuk item <strong className="text-[#0D1B3E]">{selected.item}</strong> dibandingkan harga pasar e-Katalog.</>
+                : <>Harga <strong className="text-[#0D1B3E]">{selected.item}</strong> berada dalam rentang wajar. Selisih <strong className="text-[#27AE60]">{selected.diff}</strong> masih di bawah threshold anomali (&lt;15%).</>
+              }
             </div>
-            
-            <button className="mt-6 w-full py-2.5 bg-[#0069D9] hover:bg-blue-700 text-white rounded-lg text-sm font-semibold transition-colors shadow-sm">
-              Tandai Rekaman Siluman & Blokir
+
+            <button className={`mt-6 w-full py-2.5 text-white rounded-lg text-sm font-semibold transition-colors shadow-sm ${
+              isAnomaliSelected ? 'bg-[#C0392B] hover:bg-red-700' : 'bg-[#0069D9] hover:bg-blue-700'
+            }`}>
+              {isAnomaliSelected ? '🚨 Tandai & Blokir Pembayaran' : '✅ Tandai sebagai Normal'}
             </button>
-            <p className="text-center text-[10px] mt-4 text-slate-400">Sumber: e-Katalog LKPP 2026 (Real-time DB)</p>
+            <p className="text-center text-[10px] mt-3 text-slate-400">Sumber: e-Katalog LKPP 2026 (Real-time)</p>
           </div>
         </div>
       </div>
