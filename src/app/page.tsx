@@ -6,6 +6,8 @@ import DashboardScreen from "@/components/screens/Dashboard";
 import PriceOracleScreen from "@/components/screens/PriceOracle";
 import AuditTrailScreen from "@/components/screens/AuditTrail";
 import MobilePwaScreen from "@/components/screens/MobilePWA";
+import AnalisisDataScreen from "@/components/screens/AnalisisData";
+import PengaturanScreen from "@/components/screens/Pengaturan";
 
 export default function AppContainer() {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -20,6 +22,8 @@ export default function AppContainer() {
           {activeTab === "price_oracle" && <PriceOracleScreen />}
           {activeTab === "audit_trail" && <AuditTrailScreen />}
           {activeTab === "mobile_pwa" && <MobilePwaScreen />}
+          {activeTab === "analisis" && <AnalisisDataScreen />}
+          {activeTab === "pengaturan" && <PengaturanScreen />}
         </main>
       </div>
     </div>

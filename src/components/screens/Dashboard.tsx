@@ -53,10 +53,47 @@ export default function DashboardScreen({ setActiveTab }: { setActiveTab: (tab: 
           </div>
           
           <div className="flex-1 bg-[#E8F1FA] relative overflow-hidden flex items-center justify-center p-8">
-            {/* Very abstract map SVG placeholder representing Indonesia islands */}
-            <svg viewBox="0 0 800 400" className="w-full h-auto opacity-40 text-[#0069D9]" fill="currentColor">
-              <path d="M100 200 Q150 180 200 220 T300 150 T450 180 T550 120 T650 180 T750 250" strokeWidth="20" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-              <path d="M300 280 Q350 250 400 280 T500 220 T600 280 T700 320" strokeWidth="20" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+            {/* Simplified Indonesia archipelago silhouette */}
+            <svg viewBox="0 0 1000 400" className="w-full h-auto" fill="none">
+              {/* Ocean grid pattern */}
+              <defs>
+                <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                  <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(0,105,217,0.06)" strokeWidth="1" />
+                </pattern>
+              </defs>
+              <rect width="1000" height="400" fill="url(#grid)" />
+              
+              {/* Sumatra */}
+              <path d="M80 100 L120 80 L150 110 L170 130 L180 190 L200 230 L190 270 L160 290 L130 270 L110 230 L90 190 L70 150 Z" fill="rgba(0,105,217,0.12)" stroke="rgba(0,105,217,0.3)" strokeWidth="1.5" />
+              <text x="130" y="195" fill="rgba(0,105,217,0.35)" fontSize="11" fontWeight="bold" textAnchor="middle">Sumatra</text>
+              
+              {/* Kalimantan */}
+              <path d="M330 60 L380 50 L430 70 L450 100 L460 140 L450 180 L420 200 L400 210 L370 200 L340 170 L320 130 L310 100 Z" fill="rgba(0,105,217,0.12)" stroke="rgba(0,105,217,0.3)" strokeWidth="1.5" />
+              <text x="385" y="140" fill="rgba(0,105,217,0.35)" fontSize="11" fontWeight="bold" textAnchor="middle">Kalimantan</text>
+              
+              {/* Java */}
+              <path d="M220 290 L280 275 L340 278 L390 282 L420 290 L440 300 L430 310 L390 315 L340 310 L280 305 L240 310 L220 300 Z" fill="rgba(0,105,217,0.15)" stroke="rgba(0,105,217,0.35)" strokeWidth="1.5" />
+              <text x="330" y="300" fill="rgba(0,105,217,0.4)" fontSize="10" fontWeight="bold" textAnchor="middle">Jawa</text>
+              
+              {/* Sulawesi */}
+              <path d="M530 70 L560 60 L570 80 L580 120 L600 110 L620 130 L610 150 L580 135 L570 160 L560 200 L540 220 L530 200 L520 170 L530 140 L520 110 Z" fill="rgba(0,105,217,0.12)" stroke="rgba(0,105,217,0.3)" strokeWidth="1.5" />
+              <text x="558" y="165" fill="rgba(0,105,217,0.35)" fontSize="9" fontWeight="bold" textAnchor="middle">Sulawesi</text>
+              
+              {/* Bali + NTB + NTT */}
+              <ellipse cx="460" cy="310" rx="12" ry="8" fill="rgba(0,105,217,0.12)" stroke="rgba(0,105,217,0.3)" strokeWidth="1" />
+              <ellipse cx="490" cy="315" rx="15" ry="7" fill="rgba(0,105,217,0.12)" stroke="rgba(0,105,217,0.3)" strokeWidth="1" />
+              <ellipse cx="530" cy="318" rx="18" ry="7" fill="rgba(0,105,217,0.12)" stroke="rgba(0,105,217,0.3)" strokeWidth="1" />
+              <ellipse cx="575" cy="318" rx="16" ry="6" fill="rgba(0,105,217,0.12)" stroke="rgba(0,105,217,0.3)" strokeWidth="1" />
+              <text x="520" y="340" fill="rgba(0,105,217,0.3)" fontSize="8" textAnchor="middle">Nusa Tenggara</text>
+              
+              {/* Maluku */}
+              <ellipse cx="660" cy="160" rx="15" ry="20" fill="rgba(0,105,217,0.10)" stroke="rgba(0,105,217,0.25)" strokeWidth="1" />
+              <ellipse cx="680" cy="210" rx="12" ry="18" fill="rgba(0,105,217,0.10)" stroke="rgba(0,105,217,0.25)" strokeWidth="1" />
+              <text x="670" y="245" fill="rgba(0,105,217,0.3)" fontSize="8" textAnchor="middle">Maluku</text>
+              
+              {/* Papua */}
+              <path d="M750 100 L790 80 L840 90 L880 70 L910 90 L920 120 L910 160 L880 200 L840 220 L800 210 L770 190 L750 160 L740 130 Z" fill="rgba(0,105,217,0.12)" stroke="rgba(0,105,217,0.3)" strokeWidth="1.5" />
+              <text x="830" y="155" fill="rgba(0,105,217,0.35)" fontSize="11" fontWeight="bold" textAnchor="middle">Papua</text>
             </svg>
 
             {/* Simulated Map Pins */}
