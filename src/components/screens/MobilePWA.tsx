@@ -514,7 +514,68 @@ function TabProfil() {
   );
 }
 
-// --- Main Component ---
+// --- Standalone Mobile Citizen App (for /mobile route) ---
+export function CitizenMobileApp() {
+  const [activeTab, setActiveTab] = useState<PwaTab>('tugas');
+
+  const tabs: { id: PwaTab; label: string; icon: typeof CheckCircle2 }[] = [
+    { id: 'tugas', label: 'Tugas', icon: CheckCircle2 },
+    { id: 'peta', label: 'Peta', icon: MapPin },
+    { id: 'reward', label: 'Reward', icon: Gift },
+    { id: 'profil', label: 'Profil', icon: User },
+  ];
+
+  return (
+    <div className="w-full h-dvh bg-slate-50 flex flex-col relative overflow-hidden">
+      {/* Status bar spacer */}
+      <div className="h-[env(safe-area-inset-top,0px)] bg-white shrink-0" />
+
+      {/* App Header */}
+      <div className="pb-3 pt-3 px-5 bg-white flex justify-between items-center shadow-sm relative z-40 border-b border-slate-50 shrink-0">
+        <div className="flex items-center space-x-3">
+          <div className="w-10 h-10 rounded-lg overflow-hidden shrink-0 shadow-sm">
+            <Image src="/logo.png" alt="KAWAL RUPIAH" width={40} height={40} />
+          </div>
+          <div>
+            <p className="text-[#0D1B3E] font-bold leading-none tracking-tight">KAWAL RUPIAH</p>
+            <div className="flex items-center space-x-2 mt-1">
+              <p className="text-[10px] text-slate-500 font-medium">Citizen Mining</p>
+              <LevelBadge />
+            </div>
+          </div>
+        </div>
+        <div className="bg-[#DFA000]/10 text-[#DFA000] px-3 py-1.5 rounded-full font-bold text-sm flex items-center border border-[#DFA000]/20">
+          <span className="mr-1">Rp</span>45.000
+        </div>
+      </div>
+
+      {/* Content — scrollable */}
+      <div className="flex-1 overflow-y-auto bg-slate-50 relative pb-20">
+        {activeTab === 'tugas' && <TabTugas />}
+        {activeTab === 'peta' && <TabPeta />}
+        {activeTab === 'reward' && <TabReward />}
+        {activeTab === 'profil' && <TabProfil />}
+      </div>
+
+      {/* Bottom Navigation */}
+      <div className="fixed bottom-0 left-0 w-full bg-white border-t border-slate-100 px-4 py-3 flex justify-around items-center pb-[max(0.75rem,env(safe-area-inset-bottom))] shadow-[0_-4px_20px_rgba(13,27,62,0.05)] z-40">
+        {tabs.map(tab => {
+          const Icon = tab.icon;
+          const isActive = activeTab === tab.id;
+          return (
+            <button key={tab.id} onClick={() => setActiveTab(tab.id)} className={`flex flex-col items-center transition-colors ${isActive ? 'text-[#0069D9]' : 'text-slate-400'}`}>
+              <Icon className={`w-6 h-6 mb-1 ${isActive ? 'text-[#0069D9]' : ''}`} />
+              <span className={`text-[10px] ${isActive ? 'font-bold text-[#0069D9]' : 'font-medium'}`}>{tab.label}</span>
+              {isActive && <div className="w-1 h-1 bg-[#0069D9] rounded-full mt-0.5" />}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// --- Main Component (Desktop dashboard phone mockup) ---
 export default function MobilePwaScreen() {
   const [activeTab, setActiveTab] = useState<PwaTab>('tugas');
 
