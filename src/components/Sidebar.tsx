@@ -63,7 +63,7 @@ export default function Sidebar({ activeTab, setActiveTab, isOpen, onToggle }: S
                 key={item.id}
                 onClick={() => {
                   if (item.id === "mobile_pwa") {
-                    window.open("https://kawal-rupiah-app.vercel.app/", "_blank");
+                    window.open("https://kawal-rupiah-app.vercel.app/mobile", "_blank");
                     return;
                   }
                   setActiveTab(item.id);
