@@ -1,36 +1,69 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# KAWAL RUPIAH
 
-## Getting Started
+> **Setiap Rupiah Rakyat, Dikawal Rakyat Secara Adil.**
 
-First, run the development server:
+Proyek ini dibangun untuk pendaftaran **Hackathon X DIGDAYA 2026 - Bank Indonesia & PIDI**.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **Problem Statement:** Penguatan Ketahanan dan Inovasi Keuangan
+- **Sub Problem Statement:** Smart Belanja Daerah
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🚀 Live Demo (Vercel)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Aplikasi telah di-deploy secara publik dan dapat diakses melalui link berikut:
 
-## Learn More
+| Akses | URL / Link Demo | Deskripsi |
+|---|---|---|
+| 🖥️ **Admin Dashboard** (Desktop) | [https://kawal-rupiah-app.vercel.app](https://kawal-rupiah-app.vercel.app) | POV Pemerintah/KPK. Peta anomali pengadaan nasional, Price Oracle LKPP, dan peringatan *mark-up* harga. |
+| 📱 **Citizen App** (Mobile) | [https://kawal-rupiah-app.vercel.app/mobile](https://kawal-rupiah-app.vercel.app/mobile) | POV Warga. *Progressive Web App* (PWA) untuk Citizen Mining, lengkap dengan fitur verifikasi proyek, reputasi, dan anti-kolusi. |
 
-To learn more about Next.js, take a look at the following resources:
+> **Tips Penjurian:** Buka link Admin Dashboard di laptop/PC, dan buka Citizen App di layar HP Anda untuk merasakan pengalaman yang optimal.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🌟 Fitur Utama
 
-## Deploy on Vercel
+1. **AI Price Oracle & Anomaly Detection**
+   Membandingkan harga proyek APBD secara *real-time* dengan standar LKPP (e-Katalog) untuk mendeteksi *mark-up* atau kewajaran harga tak wajar.
+2. **Citizen Mining (Audit oleh Warga)**
+   Warga lokal diubah menjadi "Auditor Part-time" dengan konsep *micro-tasking*. Warga di lokasi proyek akan ditugaskan untuk memotret dan mengecek progres langsung di lapangan dengan *reward*.
+3. **Anti-Collusion Framework (Zero-Trust)**
+   Sistem penugasan *Citizen Mining* dilakukan secara acak (Random Assignment) silang-kecamatan. Didukung oleh algoritma pHash (deteksi foto duplikat), pencocokan EXIF/GPS, dan *staking* deposit. Jika warga curang, deposit hangus.
+4. **Blockchain Audit Trail**
+   Penyelesaian proyek, *payment disbursement*, dan konsensus verifikasi lapangan dicatat dalam buku besar *Distributed Ledger Technology (DLT)* / Hyperledger Fabric agar data *immutable*.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🛠 Tech Stack
+
+Aplikasi prototype interaktif ini (Frontend) dibangun dengan:
+- **Framework:** Next.js 16 (App Router) + React 19
+- **Styling:** Tailwind CSS v4 + Lucide Icons
+- **Mapping:** React-Leaflet (Interactive Topographic Map)
+- **Charts:** Recharts (Data Visualization)
+- **Deployment:** Vercel (Edge-ready)
+
+---
+
+## 💻 Menjalankan di Lokal
+
+Jika Anda ingin menjalankan atau memodifikasi *code* di komputer lokal Anda:
+
+1. Clone repository ini:
+   ```bash
+   git clone https://github.com/mridho002/kawal-rupiah-app.git
+   cd kawal-rupiah-app
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Mulai development server:
+   ```bash
+   npm run dev
+   ```
+4. Buka `http://localhost:3000` di browser Anda.
+
+---
+*© 2026 Tim Kawal Rupiah. Dibangun untuk transparansi dan ketahanan ekonomi Indonesia.*
