@@ -62,6 +62,10 @@ export default function Sidebar({ activeTab, setActiveTab, isOpen, onToggle }: S
               <button
                 key={item.id}
                 onClick={() => {
+                  if (item.id === "mobile_pwa") {
+                    window.open("https://kawal-rupiah-app.vercel.app/", "_blank");
+                    return;
+                  }
                   setActiveTab(item.id);
                   // Close sidebar on mobile after selecting
                   if (window.innerWidth < 1024) onToggle();
