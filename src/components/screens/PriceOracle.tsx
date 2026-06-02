@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from "react";
-import { Search, Filter, Download, ArrowUpRight, AlertCircle, CheckCircle, MapPin, Calendar } from "lucide-react";
+import { Search, Filter, Download, ArrowUpRight, AlertCircle, CheckCircle, MapPin, Calendar, Upload } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from "recharts";
 
 const tableData = [
@@ -15,9 +15,15 @@ const tableData = [
 ];
 
 export default function PriceOracleScreen() {
+  const [data, setData] = useState(tableData);
   const [selectedRow, setSelectedRow] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
-  const selected = tableData.find(r => r.id === selectedRow) ?? tableData[0];
+  
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadStep, setUploadStep] = useState("");
+  const [uploadProgress, setUploadProgress] = useState(0);
+
+  const selected = data.find(r => r.id === selectedRow) ?? data[0];
   const isAnomaliSelected = selected.status === "ANOMALI";
 
   const chartData = [
@@ -25,10 +31,55 @@ export default function PriceOracleScreen() {
     { name: "Harga e-Katalog", value: selected.ekatUnit },
   ];
 
-  const filteredData = tableData.filter(r =>
+  const filteredData = data.filter(r =>
     r.item.toLowerCase().includes(searchTerm.toLowerCase()) ||
     r.daerah.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const handleSimulatedUpload = () => {
+    setIsUploading(true);
+    setUploadProgress(0);
+    setUploadStep("Mengurai RKA APBD dengan LayoutLM OCR...");
+    
+    const steps = [
+      { p: 25, s: "Sanitasi RAG (Mendeteksi & menghapus indirect prompt injection)..." },
+      { p: 50, s: "Pemetaan semantik deskripsi RKA ke e-Katalog (IndoBERT Sentence-Transformers)..." },
+      { p: 75, s: "Membangun Pricing Frontier via LKPP, LPSE, & Tokopedia/Shopee APIs..." },
+      { p: 100, s: "Selesai! Anomali terdeteksi & dicatat ke Hyperledger Fabric." }
+    ];
+
+    let currentStepIndex = 0;
+    const interval = setInterval(() => {
+      if (currentStepIndex < steps.length) {
+        const next = steps[currentStepIndex];
+        setUploadProgress(next.p);
+        setUploadStep(next.s);
+        currentStepIndex++;
+      } else {
+        clearInterval(interval);
+        setIsUploading(false);
+        
+        // Add new item to the top of list
+        const newItem = {
+          id: 99,
+          item: "Tablet Edukasi 10 Inch (E-Learning)",
+          satuan: "Unit",
+          qty: 1500,
+          propUnit: 4.8,
+          ekatUnit: 3.1,
+          propTotal: "Rp 7.200.000.000",
+          ekatTotal: "Rp 4.650.000.000",
+          diff: "+54.8%",
+          daerah: "Kota Surakarta, Jateng",
+          tahun: "2026",
+          status: "ANOMALI" as const
+        };
+        setData([newItem, ...data]);
+        setSelectedRow(newItem.id);
+        alert("🎉 RKA APBD Berhasil Diimpor! Terdeteksi 1 item anomali kritis (+54.8% mark-up). Bukti digital dicatat di Hyperledger Fabric.");
+      }
+    }, 1200);
+  };
 
   return (
     <div className="space-y-6 max-w-full pb-20">
@@ -39,6 +90,14 @@ export default function PriceOracleScreen() {
           <p className="text-sm text-[#8899AA] mt-1">AI Deteksi Anomali Harga Pengadaan — Sumber: e-Katalog LKPP (Real-time)</p>
         </div>
         <div className="flex space-x-3">
+          <button 
+            onClick={handleSimulatedUpload}
+            disabled={isUploading}
+            className="flex items-center space-x-2 px-4 py-2 bg-[#0069D9] hover:bg-blue-700 disabled:bg-slate-300 disabled:cursor-not-allowed text-white rounded-lg transition-all text-sm font-bold shadow-sm active:scale-95"
+          >
+            <Upload className="w-4 h-4" />
+            <span>{isUploading ? "Memproses RKA..." : "Simulasi Unggah RKA APBD"}</span>
+          </button>
           <button className="flex items-center space-x-2 px-4 py-2 border border-slate-200 text-slate-600 rounded-lg hover:bg-slate-50 transition-colors text-sm font-medium">
             <Filter className="w-4 h-4" />
             <span>Filter Kategori</span>
@@ -54,15 +113,15 @@ export default function PriceOracleScreen() {
       <div className="grid grid-cols-4 gap-4">
         <div className="bg-white rounded-xl p-4 border border-slate-100 shadow-sm">
           <p className="text-xs text-slate-500 font-medium mb-1">Total Item Dianalisis</p>
-          <p className="text-2xl font-black text-[#0D1B3E]">{tableData.length}</p>
+          <p className="text-2xl font-black text-[#0D1B3E]">{data.length}</p>
         </div>
         <div className="bg-white rounded-xl p-4 border border-red-100 shadow-sm">
           <p className="text-xs text-slate-500 font-medium mb-1">Terdeteksi Anomali</p>
-          <p className="text-2xl font-black text-[#C0392B]">{tableData.filter(r => r.status === "ANOMALI").length}</p>
+          <p className="text-2xl font-black text-[#C0392B]">{data.filter(r => r.status === "ANOMALI").length}</p>
         </div>
         <div className="bg-white rounded-xl p-4 border border-green-100 shadow-sm">
           <p className="text-xs text-slate-500 font-medium mb-1">Status Normal</p>
-          <p className="text-2xl font-black text-[#27AE60]">{tableData.filter(r => r.status === "NORMAL").length}</p>
+          <p className="text-2xl font-black text-[#27AE60]">{data.filter(r => r.status === "NORMAL").length}</p>
         </div>
         <div className="bg-white rounded-xl p-4 border border-slate-100 shadow-sm">
           <p className="text-xs text-slate-500 font-medium mb-1">Threshold Anomali</p>
@@ -72,6 +131,23 @@ export default function PriceOracleScreen() {
 
       {/* Main Content */}
       <div className="bg-white rounded-xl shadow-[0_2px_8px_rgba(13,27,62,0.04)] border border-slate-100 p-6">
+        
+        {/* Upload Progress Banner */}
+        {isUploading && (
+          <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 mb-6 space-y-2.5 animate-pulse">
+            <div className="flex justify-between text-xs font-bold text-[#0D1B3E]">
+              <span className="flex items-center">
+                <span className="w-2 h-2 rounded-full bg-[#0069D9] mr-2 animate-ping" />
+                Pipeline Kognitif: {uploadStep}
+              </span>
+              <span>{uploadProgress}%</span>
+            </div>
+            <div className="w-full h-2 bg-slate-250 rounded-full overflow-hidden">
+              <div className="h-full bg-gradient-to-r from-[#0069D9] to-[#27AE60] rounded-full transition-all duration-500" style={{ width: `${uploadProgress}%` }}></div>
+            </div>
+          </div>
+        )}
+
         {/* Search */}
         <div className="relative mb-6">
           <Search className="absolute left-4 top-3 h-5 w-5 text-slate-400" />

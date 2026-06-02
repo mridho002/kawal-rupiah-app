@@ -105,6 +105,60 @@ export default function PengaturanScreen() {
         </div>
       </div>
 
+      {/* Agentic Security & Compliance Info */}
+      <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-100">
+        <h3 className="font-bold text-[#0D1B3E] text-sm mb-4 flex items-center">
+          <Shield className="w-5 h-5 mr-2 text-[#0069D9]" />
+          Arsitektur Keamanan Agentic (Agentic Security & Compliance)
+        </h3>
+        <p className="text-xs text-slate-500 mb-6 leading-relaxed">
+          Sistem keamanan kognitif untuk melindungi integritas LLM Orchestrator dan mencegah eksploitasi prompt injection, bypass otorisasi (RBAC), serta halusinasi data perencanaan daerah.
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          
+          <div className="border border-slate-150 rounded-xl p-4 bg-slate-50/50 space-y-2">
+            <div className="flex justify-between items-center">
+              <span className="text-xs font-bold text-[#0D1B3E]">1. Sanitasi RAG (Input Sanitization)</span>
+              <span className="text-[9px] bg-green-100 text-green-700 font-bold px-2 py-0.5 rounded">AKTIF</span>
+            </div>
+            <p className="text-[11px] text-slate-500 leading-normal">
+              Memproses PDF APBD melalui parser khusus untuk menyaring instruksi imperatif (*indirect prompt injection*) sebelum data dimasukkan ke Vector Database (Qdrant).
+            </p>
+          </div>
+
+          <div className="border border-slate-150 rounded-xl p-4 bg-slate-50/50 space-y-2">
+            <div className="flex justify-between items-center">
+              <span className="text-xs font-bold text-[#0D1B3E]">2. JWT-Forwarding Tool Gateway</span>
+              <span className="text-[9px] bg-green-100 text-green-700 font-bold px-2 py-0.5 rounded">AKTIF</span>
+            </div>
+            <p className="text-[11px] text-slate-500 leading-normal">
+              Semua execute/write tools diisolasi di balik API Gateway. Token JWT user asli diteruskan untuk membatasi aksi LLM agar tidak bisa mem-bypass batasan RBAC.
+            </p>
+          </div>
+
+          <div className="border border-slate-150 rounded-xl p-4 bg-slate-50/50 space-y-2">
+            <div className="flex justify-between items-center">
+              <span className="text-xs font-bold text-[#0D1B3E]">3. Proctoring Halusinasi Real-time</span>
+              <span className="text-[9px] bg-green-100 text-green-700 font-bold px-2 py-0.5 rounded">AKTIF</span>
+            </div>
+            <p className="text-[11px] text-slate-500 leading-normal">
+              Verifikasi jawaban AI secara real-time menggunakan model Cross-Encoder ringan dengan latensi &lt;100ms di produksi, mengunci evaluasi RAGAS khusus pada offline CI/CD.
+            </p>
+          </div>
+
+          <div className="border border-slate-150 rounded-xl p-4 bg-slate-50/50 space-y-2">
+            <div className="flex justify-between items-center">
+              <span className="text-xs font-bold text-[#0D1B3E]">4. Hierarchical Tool Routing</span>
+              <span className="text-[9px] bg-green-100 text-green-700 font-bold px-2 py-0.5 rounded">AKTIF</span>
+            </div>
+            <p className="text-[11px] text-slate-500 leading-normal">
+              Membagi puluhan tool menjadi sub-kategori spesifik (LKPP, LPSE, retail APIs) dan merutekannya secara bertingkat untuk menghindari semantic collisions dan bloat context window.
+            </p>
+          </div>
+
+        </div>
+      </div>
+
       {/* Toggle Settings */}
       <div className="bg-white rounded-xl shadow-sm border border-slate-100 divide-y divide-slate-100">
         <div className="px-6 py-4 border-b border-slate-100">

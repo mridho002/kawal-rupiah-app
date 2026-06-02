@@ -79,6 +79,11 @@ function LevelBadge() {
 // --- Tab: Tugas ---
 function TabTugas() {
   const [selectedTask, setSelectedTask] = useState<number | null>(null);
+  const [offlineMode, setOfflineMode] = useState(false);
+  const [offlineQueue, setOfflineQueue] = useState<string[]>([]);
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [cameraCaptured, setCameraCaptured] = useState(false);
+
   const active = TASKS.find(t => t.id === selectedTask);
 
   const statusMeta: Record<TaskStatus, { label: string; color: string; bg: string }> = {
@@ -88,14 +93,42 @@ function TabTugas() {
     completed: { label: "SELESAI", color: "text-[#27AE60]", bg: "bg-green-50" },
   };
 
+  const handleCapture = () => {
+    if (offlineMode) {
+      const hash = `SHA256-${Math.random().toString(16).substring(2, 10).toUpperCase()}`;
+      setOfflineQueue([...offlineQueue, hash]);
+      alert("⚠️ Sinyal lemah! Laporan disimpan lokal di SQLite (stempel waktu & GPS dikunci).");
+    } else {
+      setCameraCaptured(true);
+      alert("Foto berhasil diambil! Metadata GPS & Timestamp tersemat otomatis.");
+    }
+  };
+
   // --- TASK DETAIL VIEW (with Anti-Collusion) ---
   if (active && active.status !== 'completed') {
     const meta = TASK_TYPE_META[active.type];
     const Icon = meta.icon;
     return (
       <div className="px-5 py-4 space-y-3 animate-in slide-in-from-right-4 duration-300">
-        <button onClick={() => setSelectedTask(null)} className="text-xs text-[#0069D9] font-bold flex items-center"><ChevronRight className="w-3 h-3 rotate-180 mr-1"/>Kembali</button>
+        <button onClick={() => { setSelectedTask(null); setCameraCaptured(false); }} className="text-xs text-[#0069D9] font-bold flex items-center"><ChevronRight className="w-3 h-3 rotate-180 mr-1"/>Kembali</button>
         
+        {/* Offline Mode Toggle Sim */}
+        <div className="flex justify-between items-center bg-slate-100 px-3 py-2 rounded-xl border border-slate-200">
+          <div className="flex items-center space-x-1.5">
+            <span className="relative flex h-2 w-2">
+              <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${offlineMode ? 'bg-orange-400' : 'bg-green-400'}`}></span>
+              <span className={`relative inline-flex rounded-full h-2 w-2 ${offlineMode ? 'bg-orange-500' : 'bg-green-500'}`}></span>
+            </span>
+            <span className="text-[10px] font-bold text-[#0D1B3E]">Simulasi Sinyal Lemah (Offline)</span>
+          </div>
+          <button 
+            onClick={() => setOfflineMode(!offlineMode)} 
+            className={`w-9 h-5 rounded-full p-0.5 transition-colors duration-200 focus:outline-none ${offlineMode ? 'bg-orange-500' : 'bg-slate-300'}`}
+          >
+            <div className={`w-4 h-4 bg-white rounded-full shadow-md transform transition-transform duration-200 ${offlineMode ? 'translate-x-4' : 'translate-x-0'}`} />
+          </button>
+        </div>
+
         {/* Anti-Collusion Badges */}
         <div className="flex flex-wrap gap-1.5">
           <div className="flex items-center bg-purple-50 text-purple-700 text-[8px] font-bold px-2 py-1 rounded-full border border-purple-200">
@@ -223,12 +256,51 @@ function TabTugas() {
             </div>
           ) : (
             <div className="space-y-1.5">
+              {offlineQueue.length > 0 && (
+                <div className="bg-orange-50 border border-orange-200 rounded-xl p-2.5 space-y-1.5">
+                  <div className="flex justify-between items-center">
+                    <span className="text-[9px] font-bold text-orange-800">SQLite Queue: {offlineQueue.length} Foto</span>
+                    <button 
+                      onClick={() => {
+                        setIsSyncing(true);
+                        setTimeout(() => {
+                          setIsSyncing(false);
+                          setOfflineQueue([]);
+                          setCameraCaptured(true);
+                          alert("Berhasil sinkronisasi! Hash gambar diunggah ke blockchain Hyperledger Fabric.");
+                        }, 1500);
+                      }}
+                      disabled={isSyncing}
+                      className="text-[8px] font-black bg-[#0D1B3E] text-white px-2 py-1 rounded hover:bg-slate-800 transition-colors"
+                    >
+                      {isSyncing ? 'Sinkron...' : 'Sync ke DLT'}
+                    </button>
+                  </div>
+                  <p className="text-[7px] text-orange-600 leading-tight">Mendeteksi sinyal kembali. Ketuk sync untuk mengunggah stempel waktu & GPS yang tersimpan di SQLite lokal.</p>
+                </div>
+              )}
+
+              {cameraCaptured && (
+                <div className="bg-green-50 border border-green-200 rounded-xl p-2 text-center text-[9px] font-bold text-green-700">
+                  ✓ Foto Terverifikasi AI & Siap Dikirim!
+                </div>
+              )}
+
               <div className="grid grid-cols-2 gap-2">
-                <button className="flex items-center justify-center space-x-1.5 py-2 border-2 border-slate-200 rounded-xl font-semibold text-slate-700 text-xs active:scale-95">
-                  <Camera className="w-4 h-4" /><span>Kamera</span>
+                <button 
+                  onClick={handleCapture}
+                  className="flex items-center justify-center space-x-1.5 py-2 border-2 border-slate-200 rounded-xl font-semibold text-slate-700 text-xs active:scale-95 hover:bg-slate-50 transition-colors"
+                >
+                  <Camera className="w-4 h-4" /><span>{offlineMode ? "Simpan Offline" : "Kamera"}</span>
                 </button>
-                <button className="flex items-center justify-center space-x-1.5 py-2 bg-[#0D1B3E] text-white rounded-xl font-semibold shadow-sm text-xs active:scale-95">
-                  <Upload className="w-4 h-4" /><span>Upload</span>
+                <button 
+                  onClick={() => alert("Kirim laporan ke consensus pool warga...")}
+                  disabled={!cameraCaptured && offlineQueue.length === 0}
+                  className={`flex items-center justify-center space-x-1.5 py-2 rounded-xl font-semibold shadow-sm text-xs active:scale-95 transition-all ${
+                    cameraCaptured ? 'bg-[#27AE60] text-white' : 'bg-[#0D1B3E] text-white opacity-50 cursor-not-allowed'
+                  }`}
+                >
+                  <Upload className="w-4 h-4" /><span>Kirim</span>
                 </button>
               </div>
               <p className="text-[7px] text-center text-slate-400">🔒 AI verifikasi: pHash duplikat, EXIF forensics, GPS match, angle diversity</p>
@@ -371,18 +443,85 @@ function TabPeta() {
 
 // --- Tab: Reward ---
 function TabReward() {
-  const totalEarned = REWARD_HISTORY.filter(r => r.status === 'success').reduce((s, r) => s + r.amount, 0);
+  const [points, setPoints] = useState(45000);
+  const [history, setHistory] = useState(REWARD_HISTORY);
+  const [showPbbModal, setShowPbbModal] = useState(false);
+  const [pbbPaid, setPbbPaid] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  const totalEarned = history.filter(r => r.status === 'success' && r.amount > 0).reduce((s, r) => s + r.amount, 0);
+
+  const handlePayPbb = () => {
+    setIsProcessing(true);
+    setTimeout(() => {
+      setPoints(0);
+      setPbbPaid(true);
+      setIsProcessing(false);
+      setShowPbbModal(false);
+      setHistory([
+        { id: 99, title: "Potongan Pajak PBB BPD Jateng", date: "Hari Ini", amount: -45000, status: "success" },
+        ...history
+      ]);
+    }, 1500);
+  };
+
   return (
-    <div className="px-5 py-4 space-y-4">
+    <div className="px-5 py-4 space-y-4 relative">
       <div className="bg-gradient-to-br from-[#0D1B3E] to-[#1a2f5e] rounded-2xl p-5 text-white relative overflow-hidden">
         <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2"></div>
         <p className="text-xs text-white/60 font-medium mb-1">Saldo Reward</p>
-        <p className="text-3xl font-black tracking-tight mb-3">Rp 45.000</p>
+        <p className="text-3xl font-black tracking-tight mb-3">Rp {points.toLocaleString('id-ID')}</p>
         <div className="flex items-center space-x-4 text-[10px]">
           <div><span className="text-white/50">Total diterima:</span> <span className="font-bold text-[#DFA000]">Rp {totalEarned.toLocaleString('id-ID')}</span></div>
           <div><span className="text-white/50">Bulan ini:</span> <span className="font-bold text-[#27AE60]">+Rp 35.000</span></div>
         </div>
-        <button className="mt-4 w-full py-2.5 bg-[#DFA000] text-[#0D1B3E] rounded-xl text-xs font-bold">Tarik ke e-Wallet / Bank</button>
+        <button onClick={() => alert("Tarik saldo ke LinkAja / DANA / QRIS...")} className="mt-4 w-full py-2.5 bg-[#DFA000] text-[#0D1B3E] rounded-xl text-xs font-bold active:scale-95 transition-transform">Tarik ke e-Wallet / Bank</button>
+      </div>
+
+      {/* BPD Tax integration widget */}
+      <div className="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 space-y-3">
+        <div className="flex items-center space-x-2 text-[#0D1B3E]">
+          <Shield className="w-5 h-5 text-[#0069D9]" />
+          <h4 className="font-bold text-xs">PBB / Pajak Daerah via BPD Jateng</h4>
+        </div>
+        <p className="text-[10px] text-slate-500 leading-tight">Gunakan Loyalty Points Anda untuk langsung mengurangi kewajiban Pajak Bumi & Bangunan (PBB) Anda via Bank Pembangunan Daerah.</p>
+        
+        {pbbPaid ? (
+          <div className="bg-green-50 border border-green-200 rounded-xl p-2.5 flex items-center space-x-2">
+            <CheckCircle2 className="w-4 h-4 text-[#27AE60]" />
+            <div>
+              <p className="text-[10px] font-bold text-green-800">Pembayaran Sukses</p>
+              <p className="text-[8px] text-green-600">Potongan Rp45.000 berhasil diaplikasikan ke NOP Pajak Anda.</p>
+            </div>
+          </div>
+        ) : (
+          <div className="bg-slate-50 rounded-xl p-3 border border-slate-150 space-y-2">
+            <div className="flex justify-between text-[10px]">
+              <span className="text-slate-500 font-medium">NOP Pajak Anda:</span>
+              <span className="font-bold text-[#0D1B3E]">32.04.120.003...</span>
+            </div>
+            <div className="flex justify-between text-[10px]">
+              <span className="text-slate-500 font-medium">Tagihan PBB Aktif:</span>
+              <span className="font-bold text-[#0D1B3E]">Rp 120.000</span>
+            </div>
+            <div className="flex justify-between text-[10px]">
+              <span className="text-slate-500 font-medium">Subsidi Loyalty Points:</span>
+              <span className="font-bold text-[#27AE60]">-Rp {points.toLocaleString('id-ID')}</span>
+            </div>
+            <hr className="border-slate-200" />
+            <div className="flex justify-between text-[10px]">
+              <span className="text-slate-500 font-bold">Sisa Tagihan Bersih:</span>
+              <span className="font-black text-[#0D1B3E]">Rp {(120000 - points).toLocaleString('id-ID')}</span>
+            </div>
+            
+            <button 
+              onClick={() => setShowPbbModal(true)}
+              className="w-full mt-2 py-2 bg-[#0069D9] text-white rounded-lg text-[10px] font-bold hover:bg-[#0056b3] transition-colors"
+            >
+              Potong Tagihan PBB Daerah
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Stake Balance */}
@@ -399,23 +538,48 @@ function TabReward() {
 
       <h4 className="font-bold text-[#0D1B3E] text-sm">Riwayat Reward</h4>
       <div className="space-y-2">
-        {REWARD_HISTORY.map(r => (
+        {history.map(r => (
           <div key={r.id} className="bg-white p-3 rounded-xl border border-slate-100 flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${r.status === 'success' ? 'bg-green-50 text-[#27AE60]' : 'bg-amber-50 text-[#DFA000]'}`}>
-                {r.status === 'success' ? <CheckCircle2 className="w-4 h-4"/> : <Clock className="w-4 h-4"/>}
+              <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${r.amount > 0 ? (r.status === 'success' ? 'bg-green-50 text-[#27AE60]' : 'bg-amber-50 text-[#DFA000]') : 'bg-red-50 text-[#C0392B]'}`}>
+                {r.amount > 0 ? (r.status === 'success' ? <CheckCircle2 className="w-4 h-4"/> : <Clock className="w-4 h-4"/>) : <AlertTriangle className="w-4 h-4"/>}
               </div>
               <div>
                 <p className="text-[11px] font-bold text-[#0D1B3E] leading-tight">{r.title}</p>
                 <p className="text-[9px] text-slate-400">{r.date}</p>
               </div>
             </div>
-            <span className={`text-xs font-bold ${r.status === 'success' ? 'text-[#27AE60]' : 'text-[#DFA000]'}`}>
-              +Rp {r.amount.toLocaleString('id-ID')}
+            <span className={`text-xs font-bold ${r.amount > 0 ? (r.status === 'success' ? 'text-[#27AE60]' : 'text-[#DFA000]') : 'text-[#C0392B]'}`}>
+              {r.amount > 0 ? '+' : ''}Rp {r.amount.toLocaleString('id-ID')}
             </span>
           </div>
         ))}
       </div>
+
+      {/* Confirmation Modal */}
+      {showPbbModal && (
+        <div className="absolute inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl p-4 w-full max-w-[280px] text-center space-y-4 animate-in zoom-in-95 duration-200">
+            <h5 className="font-bold text-slate-800 text-sm">Konfirmasi Tukar Pajak</h5>
+            <p className="text-[11px] text-slate-600 leading-normal">Apakah Anda yakin ingin menukarkan Rp45.000 Loyalty Points untuk memotong tagihan PBB NOP 32.04.120.003.002-0051.0?</p>
+            <div className="grid grid-cols-2 gap-2">
+              <button 
+                onClick={() => setShowPbbModal(false)}
+                className="py-2 border border-slate-200 text-slate-600 rounded-lg text-xs font-bold"
+              >
+                Batal
+              </button>
+              <button 
+                onClick={handlePayPbb}
+                disabled={isProcessing}
+                className="py-2 bg-[#DFA000] text-[#0D1B3E] rounded-lg text-xs font-bold"
+              >
+                {isProcessing ? "Memproses..." : "Ya, Tukar"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -423,6 +587,18 @@ function TabReward() {
 // --- Tab: Profil ---
 function TabProfil() {
   const reputationScore = 78;
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [verified, setVerified] = useState(false);
+
+  const startVerification = () => {
+    setIsVerifying(true);
+    setTimeout(() => {
+      setIsVerifying(false);
+      setVerified(true);
+      alert("✓ Verifikasi Wajah IKD Berhasil! Wajah Anda cocok 99.4% dengan database Dukcapil. Kunci publik tersemat untuk whistleblower digital.");
+    }, 2000);
+  };
+
   return (
     <div className="px-5 py-4 space-y-3">
       {/* Profile Card */}
@@ -491,14 +667,44 @@ function TabProfil() {
         <p className="text-[8px] text-slate-400 mt-1">Selesaikan 23 tasks lagi untuk unlock &quot;Progress Report&quot; tasks</p>
       </div>
 
-      {/* KTP + Anti-Fraud Status */}
-      <div className="bg-green-50 rounded-xl p-2.5 border border-green-100 flex items-center space-x-3">
-        <Shield className="w-5 h-5 text-[#27AE60] shrink-0" />
-        <div>
-          <p className="text-[10px] font-bold text-[#0D1B3E]">KTP Terverifikasi ✓</p>
-          <p className="text-[8px] text-slate-500">NIK: ****-****-3847</p>
+      {/* Camera Scanning Animation */}
+      {isVerifying && (
+        <div className="bg-slate-900 text-white rounded-xl p-4 text-center space-y-3 flex flex-col items-center justify-center min-h-[150px] animate-pulse">
+          <div className="relative w-16 h-16 rounded-full border-4 border-[#0069D9] flex items-center justify-center overflow-hidden">
+            <div className="absolute top-0 w-full h-1 bg-[#0069D9] animate-bounce"></div>
+            <User className="w-8 h-8 text-slate-400" />
+          </div>
+          <div>
+            <p className="text-[10px] font-bold">Memindai Wajah...</p>
+            <p className="text-[8px] text-slate-400">InsightFace matching dengan IKD API (SHA-256)</p>
+          </div>
         </div>
-      </div>
+      )}
+
+      {/* KTP + Anti-Fraud Status */}
+      {verified ? (
+        <div className="bg-green-50 rounded-xl p-2.5 border border-[#27AE60]/30 flex items-center space-x-3">
+          <Shield className="w-5 h-5 text-[#27AE60] shrink-0" />
+          <div>
+            <p className="text-[10px] font-bold text-[#0D1B3E]">KTP & Wajah Terverifikasi IKD ✓</p>
+            <p className="text-[8px] text-slate-500">NIK: 3204-****-****-3847 (SHA-256 Hash)</p>
+          </div>
+        </div>
+      ) : (
+        !isVerifying && (
+          <div className="bg-slate-50 rounded-xl p-3 border border-slate-200 text-center space-y-2">
+            <ShieldAlert className="w-6 h-6 text-slate-400 mx-auto" />
+            <p className="text-[10px] font-bold text-[#0D1B3E]">Verifikasi Wajah IKD Diperlukan</p>
+            <p className="text-[8px] text-slate-500 leading-tight">Untuk keamanan pelaporan dan verifikasi sasaran bansos, Anda wajib mencocokkan biometrik wajah dengan database IKD Dukcapil.</p>
+            <button 
+              onClick={startVerification}
+              className="w-full py-2 bg-[#0069D9] hover:bg-[#0056b3] text-white rounded-lg text-[9px] font-bold transition-all"
+            >
+              Verifikasi Wajah via IKD
+            </button>
+          </div>
+        )
+      )}
 
       {/* Anti-Collusion Warnings */}
       <div className="bg-slate-50 rounded-xl p-2.5 border border-slate-200">
@@ -639,7 +845,17 @@ export default function MobilePwaScreen() {
       {/* Decorative sidebar text */}
       <div className="w-80 p-4 hidden xl:block">
         <h2 className="text-3xl font-extrabold text-[#0D1B3E] mb-4">Citizen Mining PWA</h2>
-        <p className="text-slate-500 leading-relaxed mb-6 font-medium">Ubah pengawasan pemerintah menjadi <strong>micro-tasks</strong> masal dengan <strong>anti-kolusi berlapis</strong>.</p>
+        <p className="text-slate-500 leading-relaxed mb-4 font-medium">Ubah pengawasan pemerintah menjadi <strong>micro-tasks</strong> masal dengan <strong>anti-kolusi berlapis</strong>.</p>
+        
+        {/* Road Map Todo Note for Android APK */}
+        <div className="bg-amber-50 border border-amber-200 rounded-xl p-3.5 mb-6 text-xs leading-normal">
+          <p className="font-bold text-[#DFA000] mb-1 flex items-center">
+            <Clock className="w-3.5 h-3.5 mr-1" /> Road Map: Android APK Native
+          </p>
+          <p className="text-slate-600 text-[10px] leading-relaxed">
+            Build native Android (.apk) menggunakan Capacitor sedang disiapkan untuk pengujian offline-first SQLite kamera luring tingkat lanjut. Akses saat ini berjalan penuh via PWA Vercel.
+          </p>
+        </div>
         
         {/* Anti-Collusion Layers */}
         <div className="space-y-2 mb-6">

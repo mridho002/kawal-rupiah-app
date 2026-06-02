@@ -183,6 +183,90 @@ export default function DashboardScreen({ setActiveTab }: { setActiveTab: (tab: 
           </div>
         </div>
       </div>
+
+      {/* Dispute Resolution Module (Sengketa Kontraktor vs Pemda vs Warga) */}
+      <div className="bg-white rounded-xl shadow-[0_2px_8px_rgba(13,27,62,0.06)] border border-slate-100 overflow-hidden">
+        <div className="py-4 px-6 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
+          <div className="flex items-center space-x-2 text-[#0D1B3E]">
+            <AlertTriangle className="h-5 w-5 text-[#DFA000]" />
+            <h3 className="font-bold text-sm uppercase tracking-wider">Modul Penyelesaian Sengketa (Dispute Resolution Panel)</h3>
+          </div>
+          <span className="text-[10px] bg-red-100 text-red-700 px-2 py-0.5 rounded-full font-bold">2 PENANGGUHAN DANA</span>
+        </div>
+        
+        <div className="p-6">
+          <p className="text-xs text-slate-500 mb-4 leading-relaxed">
+            Jika AI SOP Engine mendeteksi deviasi anomali fisik di lapangan dari Citizen Mining, pembayaran termin dana proyek dibekukan secara otomatis di Hyperledger Fabric Smart Contract. Kontraktor dan Pemda dapat mengajukan bukti sanggahan di panel ini untuk dimediasi secara transparan.
+          </p>
+          
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr className="border-b border-slate-100 text-slate-400 font-semibold bg-slate-50/50">
+                  <th className="py-3 px-4">Proyek & Wilayah</th>
+                  <th className="py-3 px-4">Termin / Nilai Beku</th>
+                  <th className="py-3 px-4">Pemicu Deviasi (Citizen Miner)</th>
+                  <th className="py-3 px-4">Tanggal Beku</th>
+                  <th className="py-3 px-4">Sanggahan Vendor</th>
+                  <th className="py-3 px-4">Status Resolusi</th>
+                  <th className="py-3 px-4 text-right">Aksi</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-50">
+                <tr className="hover:bg-slate-50/50">
+                  <td className="py-4 px-4 font-semibold text-[#0D1B3E]">
+                    Jembatan Cisangkuy, Kab. Bandung
+                    <span className="block text-[10px] font-normal text-slate-400">Vendor: PT Sinar Karya Mandiri</span>
+                  </td>
+                  <td className="py-4 px-4 font-bold text-[#C0392B]">
+                    Termin III (Rp 1.4 M)
+                  </td>
+                  <td className="py-4 px-4">
+                    <span className="text-slate-600 font-medium">Progress Fisik Lapangan &lt; 40%</span>
+                    <span className="block text-[10px] text-red-600">Kontrak Rencana: 65% (Deviasi 25%)</span>
+                  </td>
+                  <td className="py-4 px-4 text-slate-500">28 Mei 2026</td>
+                  <td className="py-4 px-4">
+                    <span className="bg-amber-50 text-[#DFA000] border border-amber-200 px-2 py-0.5 rounded text-[10px] font-semibold">Lampiran Bukti Sanggah</span>
+                    <span className="block text-[9px] text-slate-400">Cuaca hujan lebat (Force Majeure)</span>
+                  </td>
+                  <td className="py-4 px-4">
+                    <span className="bg-orange-50 text-orange-700 border border-orange-200 px-2 py-0.5 rounded text-[10px] font-bold">DI MEDIASI (KPK/BPK)</span>
+                  </td>
+                  <td className="py-4 px-4 text-right">
+                    <button className="bg-[#0D1B3E] text-white px-3 py-1.5 rounded-lg font-bold text-[10px] hover:bg-slate-700 transition-colors">
+                      Mediasi Bukti
+                    </button>
+                  </td>
+                </tr>
+                <tr className="hover:bg-slate-50/50">
+                  <td className="py-4 px-4 font-semibold text-[#0D1B3E]">
+                    Aspal Jl. Desa Cibadak
+                    <span className="block text-[10px] font-normal text-slate-400">Vendor: CV Paving Makmur</span>
+                  </td>
+                  <td className="py-4 px-4 font-bold text-[#C0392B]">
+                    Termin II (Rp 350 Jt)
+                  </td>
+                  <td className="py-4 px-4">
+                    <span className="text-slate-600 font-medium">Bahan Baku Tidak Sesuai Specs</span>
+                    <span className="block text-[10px] text-red-600">Ketebalan aspal kurang 3cm (AI Photo Check)</span>
+                  </td>
+                  <td className="py-4 px-4 text-slate-500">01 Juni 2026</td>
+                  <td className="py-4 px-4 text-slate-400">Belum ada tanggapan</td>
+                  <td className="py-4 px-4">
+                    <span className="bg-red-50 text-red-700 border border-red-200 px-2 py-0.5 rounded text-[10px] font-bold">DANA DIBEKUKAN</span>
+                  </td>
+                  <td className="py-4 px-4 text-right">
+                    <button className="bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg font-bold text-[10px] hover:bg-slate-300 transition-colors">
+                      Kirim Peringatan
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
