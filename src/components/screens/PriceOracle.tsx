@@ -1,8 +1,16 @@
 'use client'
 
 import { useState } from "react";
-import { Search, Filter, Download, ArrowUpRight, AlertCircle, CheckCircle, MapPin, Calendar, Upload } from "lucide-react";
+import { Search, Filter, Download, ArrowUpRight, AlertCircle, CheckCircle, MapPin, Upload } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from "recharts";
+
+const tooltipStyle = {
+  borderRadius: '10px',
+  border: '1px solid rgba(148,163,184,0.2)',
+  background: 'rgba(17,24,39,0.95)',
+  fontSize: '11px',
+  color: '#F1F5F9',
+} as const;
 
 const tableData = [
   { id: 1, item: "Laptop Core i7 16GB", satuan: "Unit", qty: 492, propUnit: 25.4, ekatUnit: 16.8, propTotal: "Rp 12.496.800.000", ekatTotal: "Rp 8.265.600.000", diff: "+51%", daerah: "Kab. Bandung, Jabar", tahun: "2026", status: "ANOMALI" },
@@ -18,7 +26,7 @@ export default function PriceOracleScreen() {
   const [data, setData] = useState(tableData);
   const [selectedRow, setSelectedRow] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
-  
+
   const [isUploading, setIsUploading] = useState(false);
   const [uploadStep, setUploadStep] = useState("");
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -27,8 +35,8 @@ export default function PriceOracleScreen() {
   const isAnomaliSelected = selected.status === "ANOMALI";
 
   const chartData = [
-    { name: "Harga Diajukan", value: selected.propUnit },
-    { name: "Harga e-Katalog", value: selected.ekatUnit },
+    { name: "Diajukan", value: selected.propUnit },
+    { name: "e-Katalog", value: selected.ekatUnit },
   ];
 
   const filteredData = data.filter(r =>
@@ -40,43 +48,31 @@ export default function PriceOracleScreen() {
     setIsUploading(true);
     setUploadProgress(0);
     setUploadStep("Mengurai RKA APBD dengan LayoutLM OCR...");
-    
+
     const steps = [
-      { p: 25, s: "Sanitasi RAG (Mendeteksi & menghapus indirect prompt injection)..." },
-      { p: 50, s: "Pemetaan semantik deskripsi RKA ke e-Katalog (IndoBERT Sentence-Transformers)..." },
-      { p: 75, s: "Membangun Pricing Frontier via LKPP, LPSE, & Tokopedia/Shopee APIs..." },
-      { p: 100, s: "Selesai! Anomali terdeteksi & dicatat ke Hyperledger Fabric." }
+      { p: 25, s: "Sanitasi RAG (deteksi & hapus indirect prompt injection)..." },
+      { p: 50, s: "Pemetaan semantik RKA ke e-Katalog (IndoBERT)..." },
+      { p: 75, s: "Membangun Pricing Frontier via LKPP, LPSE & retail APIs..." },
+      { p: 100, s: "Selesai! Anomali tercatat ke Hyperledger Fabric." }
     ];
 
-    let currentStepIndex = 0;
+    let i = 0;
     const interval = setInterval(() => {
-      if (currentStepIndex < steps.length) {
-        const next = steps[currentStepIndex];
-        setUploadProgress(next.p);
-        setUploadStep(next.s);
-        currentStepIndex++;
+      if (i < steps.length) {
+        setUploadProgress(steps[i].p);
+        setUploadStep(steps[i].s);
+        i++;
       } else {
         clearInterval(interval);
         setIsUploading(false);
-        
-        // Add new item to the top of list
         const newItem = {
-          id: 99,
-          item: "Tablet Edukasi 10 Inch (E-Learning)",
-          satuan: "Unit",
-          qty: 1500,
-          propUnit: 4.8,
-          ekatUnit: 3.1,
-          propTotal: "Rp 7.200.000.000",
-          ekatTotal: "Rp 4.650.000.000",
-          diff: "+54.8%",
-          daerah: "Kota Surakarta, Jateng",
-          tahun: "2026",
-          status: "ANOMALI" as const
+          id: 99, item: "Tablet Edukasi 10\" (E-Learning)", satuan: "Unit", qty: 1500,
+          propUnit: 4.8, ekatUnit: 3.1, propTotal: "Rp 7.200.000.000", ekatTotal: "Rp 4.650.000.000",
+          diff: "+54.8%", daerah: "Kota Surakarta, Jateng", tahun: "2026", status: "ANOMALI" as const
         };
         setData([newItem, ...data]);
         setSelectedRow(newItem.id);
-        alert("🎉 RKA APBD Berhasil Diimpor! Terdeteksi 1 item anomali kritis (+54.8% mark-up). Bukti digital dicatat di Hyperledger Fabric.");
+        alert("🎉 RKA APBD Berhasil Diimpor! Terdeteksi 1 anomali kritis (+54,8% mark-up). Bukti dicatat di Hyperledger Fabric.");
       }
     }, 1200);
   };
@@ -84,100 +80,97 @@ export default function PriceOracleScreen() {
   return (
     <div className="space-y-6 max-w-full pb-20">
       {/* Header */}
-      <div className="flex justify-between items-center mb-2">
+      <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-[#0D1B3E]">Price Oracle</h2>
-          <p className="text-sm text-[#8899AA] mt-1">AI Deteksi Anomali Harga Pengadaan — Sumber: e-Katalog LKPP (Real-time)</p>
+          <h2 className="text-2xl font-bold text-slate-50">Price Oracle</h2>
+          <p className="text-sm text-slate-400 mt-1">AI deteksi anomali harga pengadaan — Sumber: e-Katalog LKPP (real-time)</p>
         </div>
-        <div className="flex space-x-3">
-          <button 
+        <div className="flex flex-wrap gap-3">
+          <button
             onClick={handleSimulatedUpload}
             disabled={isUploading}
-            className="flex items-center space-x-2 px-4 py-2 bg-[#0069D9] hover:bg-blue-700 disabled:bg-slate-300 disabled:cursor-not-allowed text-white rounded-lg transition-all text-sm font-bold shadow-sm active:scale-95"
+            className="flex items-center gap-2 px-4 py-2 bg-brand-500 hover:bg-brand-600 disabled:opacity-50 disabled:cursor-not-allowed text-[#022c22] rounded-xl transition-all text-sm font-bold active:scale-95"
           >
             <Upload className="w-4 h-4" />
-            <span>{isUploading ? "Memproses RKA..." : "Simulasi Unggah RKA APBD"}</span>
+            <span>{isUploading ? "Memproses RKA..." : "Simulasi Unggah RKA"}</span>
           </button>
-          <button className="flex items-center space-x-2 px-4 py-2 border border-slate-200 text-slate-600 rounded-lg hover:bg-slate-50 transition-colors text-sm font-medium">
-            <Filter className="w-4 h-4" />
-            <span>Filter Kategori</span>
+          <button className="flex items-center gap-2 px-4 py-2 border border-white/10 bg-white/5 text-slate-300 rounded-xl hover:bg-white/10 transition-colors text-sm font-medium">
+            <Filter className="w-4 h-4" /><span>Filter</span>
           </button>
-          <button className="flex items-center space-x-2 px-4 py-2 bg-white border border-[#DFA000] text-[#DFA000] rounded-lg hover:bg-amber-50 transition-colors text-sm font-medium">
-            <Download className="w-4 h-4" />
-            <span>Export CSV</span>
+          <button className="flex items-center gap-2 px-4 py-2 bg-gold-500/10 border border-gold-500/30 text-gold-400 rounded-xl hover:bg-gold-500/20 transition-colors text-sm font-medium">
+            <Download className="w-4 h-4" /><span>Export CSV</span>
           </button>
         </div>
       </div>
 
       {/* Summary Stats */}
-      <div className="grid grid-cols-4 gap-4">
-        <div className="bg-white rounded-xl p-4 border border-slate-100 shadow-sm">
-          <p className="text-xs text-slate-500 font-medium mb-1">Total Item Dianalisis</p>
-          <p className="text-2xl font-black text-[#0D1B3E]">{data.length}</p>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="gs-card accent-bar accent-info p-4 pl-5">
+          <p className="text-xs text-slate-400 font-medium mb-1">Total Item Dianalisis</p>
+          <p className="text-2xl font-bold text-slate-100 font-data">{data.length}</p>
         </div>
-        <div className="bg-white rounded-xl p-4 border border-red-100 shadow-sm">
-          <p className="text-xs text-slate-500 font-medium mb-1">Terdeteksi Anomali</p>
-          <p className="text-2xl font-black text-[#C0392B]">{data.filter(r => r.status === "ANOMALI").length}</p>
+        <div className="gs-card accent-bar accent-danger p-4 pl-5">
+          <p className="text-xs text-slate-400 font-medium mb-1">Terdeteksi Anomali</p>
+          <p className="text-2xl font-bold text-red-400 font-data">{data.filter(r => r.status === "ANOMALI").length}</p>
         </div>
-        <div className="bg-white rounded-xl p-4 border border-green-100 shadow-sm">
-          <p className="text-xs text-slate-500 font-medium mb-1">Status Normal</p>
-          <p className="text-2xl font-black text-[#27AE60]">{data.filter(r => r.status === "NORMAL").length}</p>
+        <div className="gs-card accent-bar accent-emerald p-4 pl-5">
+          <p className="text-xs text-slate-400 font-medium mb-1">Status Normal</p>
+          <p className="text-2xl font-bold text-brand-400 font-data">{data.filter(r => r.status === "NORMAL").length}</p>
         </div>
-        <div className="bg-white rounded-xl p-4 border border-slate-100 shadow-sm">
-          <p className="text-xs text-slate-500 font-medium mb-1">Threshold Anomali</p>
-          <p className="text-2xl font-black text-[#DFA000]">&gt;15%</p>
+        <div className="gs-card accent-bar accent-gold p-4 pl-5">
+          <p className="text-xs text-slate-400 font-medium mb-1">Threshold Anomali</p>
+          <p className="text-2xl font-bold text-gold-400 font-data">&gt;15%</p>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="bg-white rounded-xl shadow-[0_2px_8px_rgba(13,27,62,0.04)] border border-slate-100 p-6">
-        
+      <div className="gs-panel p-6">
         {/* Upload Progress Banner */}
         {isUploading && (
-          <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 mb-6 space-y-2.5 animate-pulse">
-            <div className="flex justify-between text-xs font-bold text-[#0D1B3E]">
+          <div className="bg-white/[0.03] border border-white/10 rounded-xl p-4 mb-6 space-y-2.5">
+            <div className="flex justify-between text-xs font-bold text-slate-200">
               <span className="flex items-center">
-                <span className="w-2 h-2 rounded-full bg-[#0069D9] mr-2 animate-ping" />
+                <span className="w-2 h-2 rounded-full bg-brand-400 mr-2 animate-ping" />
                 Pipeline Kognitif: {uploadStep}
               </span>
-              <span>{uploadProgress}%</span>
+              <span className="font-data">{uploadProgress}%</span>
             </div>
-            <div className="w-full h-2 bg-slate-250 rounded-full overflow-hidden">
-              <div className="h-full bg-gradient-to-r from-[#0069D9] to-[#27AE60] rounded-full transition-all duration-500" style={{ width: `${uploadProgress}%` }}></div>
+            <div className="w-full h-2 bg-white/5 rounded-full overflow-hidden">
+              <div className="h-full bg-gradient-to-r from-brand-500 to-gold-500 rounded-full transition-all duration-500" style={{ width: `${uploadProgress}%` }}></div>
             </div>
           </div>
         )}
 
         {/* Search */}
         <div className="relative mb-6">
-          <Search className="absolute left-4 top-3 h-5 w-5 text-slate-400" />
+          <Search className="absolute left-4 top-3 h-5 w-5 text-slate-500" />
           <input
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Cari item pengadaan, spesifikasi, atau nama daerah..."
-            className="w-full pl-12 pr-4 py-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white text-sm focus:outline-none focus:ring-2 focus:ring-[#0069D9]/20 focus:border-[#0069D9] transition-all"
+            placeholder="Cari item pengadaan, spesifikasi, atau daerah..."
+            className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 focus:border-brand-500/40 transition-all"
           />
         </div>
 
         <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
-          {/* Table — wider */}
-          <div className="xl:col-span-3 border border-slate-200 rounded-xl overflow-hidden">
-            <div className="overflow-x-auto">
+          {/* Table */}
+          <div className="xl:col-span-3 border border-white/[0.06] rounded-xl overflow-hidden">
+            <div className="overflow-x-auto custom-scrollbar">
               <table className="w-full text-left border-collapse min-w-[900px]">
                 <thead>
-                  <tr className="bg-[#0D1B3E] text-white">
+                  <tr className="bg-white/[0.04] text-slate-400">
                     <th className="py-3 px-3 text-[10px] font-bold uppercase tracking-wider">Item / Spek</th>
                     <th className="py-3 px-3 text-[10px] font-bold uppercase tracking-wider">Satuan</th>
                     <th className="py-3 px-3 text-[10px] font-bold uppercase tracking-wider text-center">Qty</th>
-                    <th className="py-3 px-3 text-[10px] font-bold uppercase tracking-wider">Harga Satuan /<br/>Diajukan</th>
-                    <th className="py-3 px-3 text-[10px] font-bold uppercase tracking-wider">Harga Satuan /<br/>e-Katalog</th>
+                    <th className="py-3 px-3 text-[10px] font-bold uppercase tracking-wider">Diajukan</th>
+                    <th className="py-3 px-3 text-[10px] font-bold uppercase tracking-wider">e-Katalog</th>
                     <th className="py-3 px-3 text-[10px] font-bold uppercase tracking-wider text-center">Selisih</th>
                     <th className="py-3 px-3 text-[10px] font-bold uppercase tracking-wider">Daerah</th>
                     <th className="py-3 px-3 text-[10px] font-bold uppercase tracking-wider text-center">Status</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody className="divide-y divide-white/[0.04]">
                   {filteredData.map((row) => {
                     const isAnomali = row.status === "ANOMALI";
                     const isSelected = selectedRow === row.id;
@@ -187,30 +180,30 @@ export default function PriceOracleScreen() {
                         onClick={() => setSelectedRow(row.id)}
                         className={`cursor-pointer transition-all duration-150 ${
                           isSelected
-                            ? isAnomali ? 'bg-red-50/80 ring-1 ring-inset ring-red-200' : 'bg-green-50/80 ring-1 ring-inset ring-green-200'
-                            : isAnomali ? 'hover:bg-red-50/30' : 'hover:bg-slate-50'
+                            ? isAnomali ? 'bg-red-500/10 ring-1 ring-inset ring-red-500/30' : 'bg-brand-500/10 ring-1 ring-inset ring-brand-500/30'
+                            : 'hover:bg-white/[0.03]'
                         }`}
                       >
-                        <td className="py-3.5 px-3 font-semibold text-[#0D1B3E] text-sm">{row.item}</td>
+                        <td className="py-3.5 px-3 font-semibold text-slate-100 text-sm">{row.item}</td>
                         <td className="py-3.5 px-3 text-xs text-slate-500 font-medium">{row.satuan}</td>
-                        <td className="py-3.5 px-3 text-sm font-bold text-center text-[#0D1B3E]">{row.qty.toLocaleString('id-ID')}</td>
-                        <td className="py-3.5 px-3 text-sm font-medium text-[#0D1B3E]">Rp {row.propUnit} Jt</td>
-                        <td className="py-3.5 px-3 text-sm text-slate-500">Rp {row.ekatUnit} Jt</td>
-                        <td className={`py-3.5 px-3 text-sm font-bold text-center ${isAnomali ? 'text-[#C0392B]' : 'text-slate-600'}`}>
+                        <td className="py-3.5 px-3 text-sm font-bold text-center text-slate-200 font-data">{row.qty.toLocaleString('id-ID')}</td>
+                        <td className="py-3.5 px-3 text-sm font-medium text-slate-200 font-data">Rp {row.propUnit} Jt</td>
+                        <td className="py-3.5 px-3 text-sm text-slate-500 font-data">Rp {row.ekatUnit} Jt</td>
+                        <td className={`py-3.5 px-3 text-sm font-bold text-center font-data ${isAnomali ? 'text-red-400' : 'text-slate-400'}`}>
                           <div className="flex items-center justify-center">
                             {isAnomali && <ArrowUpRight className="w-3 h-3 mr-0.5" strokeWidth={3} />}
                             {row.diff}
                           </div>
                         </td>
                         <td className="py-3.5 px-3">
-                          <div className="flex items-center text-xs text-slate-600">
-                            <MapPin className="w-3 h-3 mr-1 text-slate-400 shrink-0" />
+                          <div className="flex items-center text-xs text-slate-400">
+                            <MapPin className="w-3 h-3 mr-1 text-slate-500 shrink-0" />
                             <span className="truncate max-w-[120px]">{row.daerah}</span>
                           </div>
                         </td>
                         <td className="py-3.5 px-3 text-center">
                           <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                            isAnomali ? 'bg-[#C0392B] text-white' : 'bg-[#27AE60] text-white'
+                            isAnomali ? 'bg-red-500/15 text-red-400 border border-red-500/20' : 'bg-brand-500/15 text-brand-400 border border-brand-500/20'
                           }`}>
                             {isAnomali ? <AlertCircle className="w-3 h-3 mr-0.5" /> : <CheckCircle className="w-3 h-3 mr-0.5" />}
                             {row.status}
@@ -224,77 +217,59 @@ export default function PriceOracleScreen() {
             </div>
           </div>
 
-          {/* Right Detail Panel */}
-          <div className={`rounded-xl border-2 p-5 shadow-sm flex flex-col ${
-            isAnomaliSelected ? 'border-red-200 bg-red-50/20' : 'border-green-200 bg-green-50/20'
+          {/* Detail Panel */}
+          <div className={`rounded-xl border p-5 flex flex-col ${
+            isAnomaliSelected ? 'border-red-500/20 bg-red-500/[0.04]' : 'border-brand-500/20 bg-brand-500/[0.04]'
           }`}>
             <div className="flex items-center justify-between mb-3">
-              <h3 className="font-bold text-[#0D1B3E] text-sm">Analisis Detail</h3>
+              <h3 className="font-bold text-slate-100 text-sm">Analisis Detail</h3>
               <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                isAnomaliSelected ? 'bg-[#C0392B] text-white' : 'bg-[#27AE60] text-white'
+                isAnomaliSelected ? 'bg-red-500/15 text-red-400 border border-red-500/20' : 'bg-brand-500/15 text-brand-400 border border-brand-500/20'
               }`}>{selected.status}</span>
             </div>
 
-            <div className="bg-white rounded-lg border border-slate-100 p-3 mb-4">
-              <p className="font-bold text-[#0D1B3E] text-sm mb-2 truncate">{selected.item}</p>
-              <div className="space-y-1.5 text-xs text-slate-600">
-                <div className="flex justify-between">
-                  <span className="text-slate-400">Daerah:</span>
-                  <span className="font-medium text-[#0D1B3E]">{selected.daerah}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-400">Qty:</span>
-                  <span className="font-bold text-[#0D1B3E]">{selected.qty.toLocaleString('id-ID')} {selected.satuan}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-400">Total Diajukan:</span>
-                  <span className="font-bold text-[#C0392B]">{selected.propTotal}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-400">Total e-Katalog:</span>
-                  <span className="font-medium text-[#0069D9]">{selected.ekatTotal}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-400">TA:</span>
-                  <span className="font-medium">{selected.tahun}</span>
-                </div>
+            <div className="bg-white/[0.03] rounded-lg border border-white/[0.06] p-3 mb-4">
+              <p className="font-bold text-slate-100 text-sm mb-2 truncate">{selected.item}</p>
+              <div className="space-y-1.5 text-xs">
+                <div className="flex justify-between"><span className="text-slate-500">Daerah:</span><span className="font-medium text-slate-200">{selected.daerah}</span></div>
+                <div className="flex justify-between"><span className="text-slate-500">Qty:</span><span className="font-bold text-slate-200 font-data">{selected.qty.toLocaleString('id-ID')} {selected.satuan}</span></div>
+                <div className="flex justify-between"><span className="text-slate-500">Total Diajukan:</span><span className="font-bold text-red-400 font-data">{selected.propTotal}</span></div>
+                <div className="flex justify-between"><span className="text-slate-500">Total e-Katalog:</span><span className="font-medium text-blue-400 font-data">{selected.ekatTotal}</span></div>
+                <div className="flex justify-between"><span className="text-slate-500">TA:</span><span className="font-medium text-slate-300 font-data">{selected.tahun}</span></div>
               </div>
             </div>
 
             <p className="text-[10px] text-slate-500 font-semibold uppercase tracking-wider mb-2">Perbandingan Harga Satuan</p>
-            <div className="h-44 w-full bg-white rounded-lg border border-slate-100 p-1">
+            <div className="h-44 w-full bg-white/[0.02] rounded-lg border border-white/[0.06] p-1">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={chartData} margin={{ top: 15, right: 10, left: -15, bottom: 0 }}>
-                  <XAxis dataKey="name" tick={{ fontSize: 9, fill: '#64748B' }} axisLine={false} tickLine={false} />
-                  <YAxis tick={{ fontSize: 9, fill: '#64748B' }} axisLine={false} tickLine={false} tickFormatter={(v) => `${v}Jt`} />
-                  <Tooltip
-                    contentStyle={{ borderRadius: '8px', border: '1px solid #E2E8F0', fontSize: '11px' }}
-                    formatter={(value) => [`Rp ${value} Juta`, 'Harga']}
-                  />
+                  <XAxis dataKey="name" tick={{ fontSize: 9, fill: '#94A3B8' }} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fontSize: 9, fill: '#94A3B8' }} axisLine={false} tickLine={false} tickFormatter={(v) => `${v}Jt`} />
+                  <Tooltip contentStyle={tooltipStyle} cursor={{ fill: 'rgba(148,163,184,0.06)' }} formatter={(value) => [`Rp ${value} Juta`, 'Harga']} />
                   <Bar dataKey="value" radius={[6, 6, 0, 0]} barSize={36}>
-                    <Cell key="c0" fill={isAnomaliSelected ? '#C0392B' : '#27AE60'} />
-                    <Cell key="c1" fill="#0069D9" />
+                    <Cell key="c0" fill={isAnomaliSelected ? '#EF4444' : '#10B981'} />
+                    <Cell key="c1" fill="#3B82F6" />
                   </Bar>
                 </BarChart>
               </ResponsiveContainer>
             </div>
 
             <div className={`mt-4 p-3 rounded-lg border text-xs leading-relaxed font-medium ${
-              isAnomaliSelected ? 'bg-red-50 border-red-100 text-slate-700' : 'bg-green-50 border-green-100 text-slate-700'
+              isAnomaliSelected ? 'bg-red-500/[0.06] border-red-500/15 text-slate-300' : 'bg-brand-500/[0.06] border-brand-500/15 text-slate-300'
             }`}>
-              <p className="font-bold text-[#0D1B3E] mb-1 text-[10px] uppercase tracking-wider">🤖 AI Kesimpulan:</p>
+              <p className="font-bold text-slate-200 mb-1 text-[10px] uppercase tracking-wider flex items-center gap-1">🤖 AI Kesimpulan</p>
               {isAnomaliSelected
-                ? <p>Harga satuan <strong className="text-[#C0392B]">Rp {selected.propUnit} Jt</strong> berada <strong className="text-[#C0392B]">{selected.diff}</strong> di atas harga wajar e-Katalog <strong className="text-[#0069D9]">Rp {selected.ekatUnit} Jt</strong>. Dengan qty <strong>{selected.qty.toLocaleString('id-ID')} {selected.satuan}</strong>, potensi kerugian negara mencapai <strong className="text-[#C0392B]">Rp {((selected.propUnit - selected.ekatUnit) * selected.qty).toFixed(0)} Jt</strong>.</p>
-                : <p>Harga item <strong className="text-[#0D1B3E]">{selected.item}</strong> berada dalam rentang wajar. Selisih <strong className="text-[#27AE60]">{selected.diff}</strong> masih di bawah threshold anomali (&lt;15%).</p>
+                ? <p>Harga satuan <strong className="text-red-400 font-data">Rp {selected.propUnit} Jt</strong> berada <strong className="text-red-400">{selected.diff}</strong> di atas harga wajar e-Katalog <strong className="text-blue-400 font-data">Rp {selected.ekatUnit} Jt</strong>. Dengan qty <strong className="text-slate-200 font-data">{selected.qty.toLocaleString('id-ID')}</strong>, potensi kerugian negara <strong className="text-red-400 font-data">Rp {((selected.propUnit - selected.ekatUnit) * selected.qty).toFixed(0)} Jt</strong>.</p>
+                : <p>Harga <strong className="text-slate-100">{selected.item}</strong> dalam rentang wajar. Selisih <strong className="text-brand-400">{selected.diff}</strong> masih di bawah threshold (&lt;15%).</p>
               }
             </div>
 
-            <button className={`mt-4 w-full py-2.5 text-white rounded-lg text-xs font-bold transition-colors shadow-sm ${
-              isAnomaliSelected ? 'bg-[#C0392B] hover:bg-red-700' : 'bg-[#0069D9] hover:bg-blue-700'
+            <button className={`mt-4 w-full py-2.5 rounded-xl text-xs font-bold transition-colors ${
+              isAnomaliSelected ? 'bg-red-500 hover:bg-red-600 text-white' : 'bg-brand-500 hover:bg-brand-600 text-[#022c22]'
             }`}>
               {isAnomaliSelected ? '🚨 Tandai & Blokir Pembayaran' : '✅ Tandai sebagai Wajar'}
             </button>
-            <p className="text-center text-[9px] mt-2 text-slate-400">Sumber: e-Katalog LKPP 2026 (Real-time)</p>
+            <p className="text-center text-[9px] mt-2 text-slate-500">Sumber: e-Katalog LKPP 2026 (real-time)</p>
           </div>
         </div>
       </div>

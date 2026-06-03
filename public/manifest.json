@@ -1,0 +1,49 @@
+{
+  "name": "Kawal Rupiah — Pengawasan APBD AI & Blockchain",
+  "short_name": "KawalRp",
+  "description": "Deteksi dini markup APBD & audit sosial warga berbasis AI Price Oracle dan Hyperledger Fabric.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "theme_color": "#0B1120",
+  "background_color": "#06080F",
+  "categories": ["government", "finance", "productivity"],
+  "lang": "id",
+  "dir": "ltr",
+  "icons": [
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Citizen Mining",
+      "short_name": "Mining",
+      "description": "Buka aplikasi warga untuk verifikasi proyek",
+      "url": "/mobile",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

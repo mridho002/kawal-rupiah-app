@@ -14,16 +14,19 @@ export default function AppContainer() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="flex h-screen bg-[#F5F7FA] overflow-hidden">
+    <div className="flex h-screen bg-void overflow-hidden text-slate-100">
       <Sidebar
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         isOpen={sidebarOpen}
         onToggle={() => setSidebarOpen(!sidebarOpen)}
       />
-      
+
       <div className="flex-1 lg:ml-64 overflow-auto relative">
-        <main className="min-h-full max-w-7xl mx-auto p-4 pt-16 lg:p-8 lg:pt-8 animate-in fade-in duration-500">
+        <main
+          key={activeTab}
+          className="min-h-full max-w-7xl mx-auto p-4 pt-20 lg:p-8 lg:pt-8 animate-fade-in"
+        >
           {activeTab === "dashboard" && <DashboardScreen setActiveTab={setActiveTab} />}
           {activeTab === "price_oracle" && <PriceOracleScreen />}
           {activeTab === "audit_trail" && <AuditTrailScreen />}

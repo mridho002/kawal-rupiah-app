@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useState } from 'react';
-import { MapPin } from 'lucide-react';
 
 // Project markers data
 const PROJECT_MARKERS = [
@@ -112,10 +111,10 @@ function LeafletMap() {
 
   if (!mapReady || !L || !Components) {
     return (
-      <div className="w-full h-full flex items-center justify-center bg-[#E8F1FA]">
+      <div className="w-full h-full flex items-center justify-center bg-base">
         <div className="flex flex-col items-center space-y-3">
-          <div className="w-8 h-8 border-3 border-[#0069D9] border-t-transparent rounded-full animate-spin"></div>
-          <p className="text-sm text-slate-500 font-medium">Memuat peta Indonesia...</p>
+          <div className="w-8 h-8 border-2 border-brand-400 border-t-transparent rounded-full animate-spin"></div>
+          <p className="text-sm text-slate-400 font-medium">Memuat peta Indonesia...</p>
         </div>
       </div>
     );
@@ -123,45 +122,30 @@ function LeafletMap() {
 
   const { MapContainer, TileLayer, CircleMarker, Popup, Tooltip: MapTooltip } = Components;
 
-  const createAnomalyIcon = (isAnomaly: boolean) => {
-    return L.divIcon({
-      className: 'custom-marker',
-      html: `<div style="
-        width: ${isAnomaly ? '20px' : '14px'}; 
-        height: ${isAnomaly ? '20px' : '14px'}; 
-        background: ${isAnomaly ? '#C0392B' : '#27AE60'};
-        border: 3px solid white;
-        border-radius: 50%;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-        ${isAnomaly ? 'animation: pulse-red 2s infinite;' : ''}
-      "></div>`,
-      iconSize: [isAnomaly ? 20 : 14, isAnomaly ? 20 : 14],
-      iconAnchor: [isAnomaly ? 10 : 7, isAnomaly ? 10 : 7],
-    });
-  };
+  void hoveredMarker;
 
   return (
     <MapContainer
       center={[-2.5, 118]}
       zoom={5}
-      style={{ width: '100%', height: '100%' }}
+      style={{ width: '100%', height: '100%', background: '#06080F' }}
       zoomControl={true}
       scrollWheelZoom={true}
       attributionControl={false}
     >
       <TileLayer
-        url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+        url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
       />
-      
+
       {PROJECT_MARKERS.map((marker) => (
         <CircleMarker
           key={marker.id}
           center={[marker.lat, marker.lng]}
           radius={marker.anomaly ? 10 : 7}
           pathOptions={{
-            color: marker.anomaly ? '#C0392B' : '#27AE60',
-            fillColor: marker.anomaly ? '#C0392B' : '#27AE60',
-            fillOpacity: 0.8,
+            color: marker.anomaly ? '#EF4444' : '#10B981',
+            fillColor: marker.anomaly ? '#EF4444' : '#10B981',
+            fillOpacity: 0.85,
             weight: 2,
           }}
           eventHandlers={{
@@ -172,16 +156,16 @@ function LeafletMap() {
           <Popup>
             <div style={{ minWidth: '180px', padding: '4px' }}>
               {marker.anomaly && (
-                <div style={{ background: '#C0392B', color: 'white', padding: '4px 8px', borderRadius: '4px', fontSize: '10px', fontWeight: 'bold', marginBottom: '6px', textAlign: 'center', letterSpacing: '0.5px' }}>
+                <div style={{ background: '#EF4444', color: 'white', padding: '4px 8px', borderRadius: '6px', fontSize: '10px', fontWeight: 'bold', marginBottom: '6px', textAlign: 'center', letterSpacing: '0.5px' }}>
                   ⚠️ ANOMALI HARGA {marker.markup}
                 </div>
               )}
-              <p style={{ fontWeight: 'bold', fontSize: '12px', color: '#0D1B3E', margin: '0 0 4px 0' }}>{marker.title}</p>
-              <p style={{ fontSize: '11px', color: '#64748b', margin: '0 0 2px 0' }}>{marker.category}</p>
-              <p style={{ fontSize: '11px', color: '#0069D9', fontWeight: 'bold', margin: '0' }}>Nilai: {marker.value}</p>
+              <p style={{ fontWeight: 'bold', fontSize: '12px', color: '#F1F5F9', margin: '0 0 4px 0' }}>{marker.title}</p>
+              <p style={{ fontSize: '11px', color: '#94A3B8', margin: '0 0 2px 0' }}>{marker.category}</p>
+              <p style={{ fontSize: '11px', color: '#34D399', fontWeight: 'bold', margin: '0' }}>Nilai: {marker.value}</p>
             </div>
           </Popup>
-          <MapTooltip direction="top" offset={[0, -10]} opacity={0.95}>
+          <MapTooltip direction="top" offset={[0, -10]} opacity={1}>
             <span style={{ fontWeight: 'bold', fontSize: '11px' }}>
               {marker.anomaly ? '🔴 ' : '🟢 '}{marker.title}
             </span>
@@ -201,23 +185,33 @@ export default function IndonesiaMap() {
       />
       <style>{`
         .leaflet-popup-content-wrapper {
+          background: rgba(17, 24, 39, 0.92) !important;
+          backdrop-filter: blur(12px) !important;
+          color: #f1f5f9 !important;
           border-radius: 12px !important;
-          box-shadow: 0 4px 20px rgba(0,0,0,0.15) !important;
-          border: 1px solid #e2e8f0 !important;
+          box-shadow: 0 8px 30px rgba(0,0,0,0.5) !important;
+          border: 1px solid rgba(148,163,184,0.15) !important;
         }
         .leaflet-popup-tip {
-          box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+          background: rgba(17, 24, 39, 0.92) !important;
+          box-shadow: none !important;
         }
+        .leaflet-popup-close-button { color: #94a3b8 !important; }
         .leaflet-tooltip {
+          background: rgba(17, 24, 39, 0.95) !important;
+          color: #f1f5f9 !important;
           border-radius: 8px !important;
           padding: 4px 10px !important;
-          border: 1px solid #e2e8f0 !important;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+          border: 1px solid rgba(148,163,184,0.18) !important;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.4) !important;
         }
-        @keyframes pulse-red {
-          0%, 100% { box-shadow: 0 0 0 0 rgba(192, 57, 43, 0.7); }
-          50% { box-shadow: 0 0 0 8px rgba(192, 57, 43, 0); }
+        .leaflet-tooltip-top:before { border-top-color: rgba(17,24,39,0.95) !important; }
+        .leaflet-control-zoom a {
+          background: rgba(17,24,39,0.9) !important;
+          color: #f1f5f9 !important;
+          border-color: rgba(148,163,184,0.15) !important;
         }
+        .leaflet-control-zoom a:hover { background: rgba(30,41,59,0.95) !important; }
       `}</style>
       <LeafletMap />
     </div>

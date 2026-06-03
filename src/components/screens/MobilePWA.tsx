@@ -1,8 +1,7 @@
 'use client'
 
 import { useState } from "react";
-import { MapPin, Camera, Upload, CheckCircle2, User, Gift, Target, Coins, Star, Shield, Clock, ChevronRight, TrendingUp, AlertTriangle, FileText, Eye, Lock, ShieldAlert, ImageIcon, Shuffle } from "lucide-react";
-import Image from "next/image";
+import { MapPin, Camera, Upload, CheckCircle2, User, Gift, Target, Coins, Star, Shield, Clock, ChevronRight, TrendingUp, AlertTriangle, FileText, Lock, ShieldAlert, ImageIcon, Shuffle, ShieldCheck } from "lucide-react";
 
 // --- Types ---
 type TaskType = 'existence' | 'quality' | 'progress';
@@ -27,9 +26,9 @@ interface MiningTask {
 }
 
 const TASK_TYPE_META: Record<TaskType, { label: string; icon: typeof Camera; color: string; bg: string }> = {
-  existence: { label: "Existence Verify", icon: Camera, color: "text-[#0069D9]", bg: "bg-blue-50" },
-  quality: { label: "Quality Check", icon: FileText, color: "text-[#DFA000]", bg: "bg-amber-50" },
-  progress: { label: "Progress Report", icon: TrendingUp, color: "text-[#27AE60]", bg: "bg-green-50" },
+  existence: { label: "Existence Verify", icon: Camera, color: "text-blue-400", bg: "bg-blue-500/10" },
+  quality: { label: "Quality Check", icon: FileText, color: "text-gold-400", bg: "bg-gold-500/10" },
+  progress: { label: "Progress Report", icon: TrendingUp, color: "text-brand-400", bg: "bg-brand-500/10" },
 };
 
 const TASKS: MiningTask[] = [
@@ -48,20 +47,18 @@ const REWARD_HISTORY = [
   { id: 5, title: "Bonus Akurasi (>90%)", date: "10 Mar 2026", amount: 10000, status: "success" },
 ];
 
-// --- Consensus Indicator Component ---
+// --- Consensus Indicator ---
 function ConsensusIndicator({ done, total }: { done: number; total: number }) {
   return (
     <div className="flex items-center space-x-0.5">
       {Array.from({ length: total }).map((_, i) => (
-        <div key={i} className={`w-3.5 h-3.5 rounded-full flex items-center justify-center text-[7px] font-black border-2 ${
-          i < done
-            ? 'bg-[#27AE60] border-[#27AE60] text-white'
-            : 'bg-white border-slate-300 text-slate-400'
+        <div key={i} className={`w-3.5 h-3.5 rounded-full flex items-center justify-center text-[7px] font-black border ${
+          i < done ? 'bg-brand-500 border-brand-500 text-[#022c22]' : 'bg-white/5 border-white/15 text-slate-600'
         }`}>
           {i < done ? '✓' : '○'}
         </div>
       ))}
-      <span className="text-[10px] text-slate-500 font-bold ml-1">{done}/{total}</span>
+      <span className="text-[10px] text-slate-400 font-bold ml-1 font-data">{done}/{total}</span>
     </div>
   );
 }
@@ -69,9 +66,9 @@ function ConsensusIndicator({ done, total }: { done: number; total: number }) {
 // --- Level Badge ---
 function LevelBadge() {
   return (
-    <div className="flex items-center bg-gradient-to-r from-[#DFA000]/10 to-[#DFA000]/5 px-2.5 py-1 rounded-full border border-[#DFA000]/20">
-      <Star className="w-3 h-3 text-[#DFA000] mr-1" fill="#DFA000" />
-      <span className="text-[10px] font-bold text-[#DFA000]">Lv.2 Terlatih</span>
+    <div className="flex items-center bg-gold-500/10 px-2.5 py-1 rounded-full border border-gold-500/20">
+      <Star className="w-3 h-3 text-gold-400 mr-1" fill="currentColor" />
+      <span className="text-[10px] font-bold text-gold-400">Lv.2 Terlatih</span>
     </div>
   );
 }
@@ -87,10 +84,10 @@ function TabTugas() {
   const active = TASKS.find(t => t.id === selectedTask);
 
   const statusMeta: Record<TaskStatus, { label: string; color: string; bg: string }> = {
-    available: { label: "TERSEDIA", color: "text-[#0069D9]", bg: "bg-blue-50" },
-    in_progress: { label: "DALAM PROSES", color: "text-[#DFA000]", bg: "bg-amber-50" },
-    pending_consensus: { label: "MENUNGGU KONSENSUS", color: "text-orange-600", bg: "bg-orange-50" },
-    completed: { label: "SELESAI", color: "text-[#27AE60]", bg: "bg-green-50" },
+    available: { label: "TERSEDIA", color: "text-blue-400", bg: "bg-blue-500/10" },
+    in_progress: { label: "DALAM PROSES", color: "text-gold-400", bg: "bg-gold-500/10" },
+    pending_consensus: { label: "MENUNGGU KONSENSUS", color: "text-orange-400", bg: "bg-orange-500/10" },
+    completed: { label: "SELESAI", color: "text-brand-400", bg: "bg-brand-500/10" },
   };
 
   const handleCapture = () => {
@@ -104,26 +101,26 @@ function TabTugas() {
     }
   };
 
-  // --- TASK DETAIL VIEW (with Anti-Collusion) ---
+  // --- TASK DETAIL VIEW ---
   if (active && active.status !== 'completed') {
     const meta = TASK_TYPE_META[active.type];
     const Icon = meta.icon;
     return (
-      <div className="px-5 py-4 space-y-3 animate-in slide-in-from-right-4 duration-300">
-        <button onClick={() => { setSelectedTask(null); setCameraCaptured(false); }} className="text-xs text-[#0069D9] font-bold flex items-center"><ChevronRight className="w-3 h-3 rotate-180 mr-1"/>Kembali</button>
-        
-        {/* Offline Mode Toggle Sim */}
-        <div className="flex justify-between items-center bg-slate-100 px-3 py-2 rounded-xl border border-slate-200">
+      <div className="px-5 py-4 space-y-3 animate-slide-in-right">
+        <button onClick={() => { setSelectedTask(null); setCameraCaptured(false); }} className="text-xs text-brand-400 font-bold flex items-center"><ChevronRight className="w-3 h-3 rotate-180 mr-1" />Kembali</button>
+
+        {/* Offline Mode Toggle */}
+        <div className="flex justify-between items-center bg-white/[0.03] px-3 py-2 rounded-xl border border-white/[0.06]">
           <div className="flex items-center space-x-1.5">
             <span className="relative flex h-2 w-2">
-              <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${offlineMode ? 'bg-orange-400' : 'bg-green-400'}`}></span>
-              <span className={`relative inline-flex rounded-full h-2 w-2 ${offlineMode ? 'bg-orange-500' : 'bg-green-500'}`}></span>
+              <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${offlineMode ? 'bg-orange-400' : 'bg-brand-400'}`}></span>
+              <span className={`relative inline-flex rounded-full h-2 w-2 ${offlineMode ? 'bg-orange-500' : 'bg-brand-500'}`}></span>
             </span>
-            <span className="text-[10px] font-bold text-[#0D1B3E]">Simulasi Sinyal Lemah (Offline)</span>
+            <span className="text-[10px] font-bold text-slate-200">Simulasi Sinyal Lemah (Offline)</span>
           </div>
-          <button 
-            onClick={() => setOfflineMode(!offlineMode)} 
-            className={`w-9 h-5 rounded-full p-0.5 transition-colors duration-200 focus:outline-none ${offlineMode ? 'bg-orange-500' : 'bg-slate-300'}`}
+          <button
+            onClick={() => setOfflineMode(!offlineMode)}
+            className={`w-9 h-5 rounded-full p-0.5 transition-colors duration-200 focus:outline-none ${offlineMode ? 'bg-orange-500' : 'bg-white/15'}`}
           >
             <div className={`w-4 h-4 bg-white rounded-full shadow-md transform transition-transform duration-200 ${offlineMode ? 'translate-x-4' : 'translate-x-0'}`} />
           </button>
@@ -131,72 +128,72 @@ function TabTugas() {
 
         {/* Anti-Collusion Badges */}
         <div className="flex flex-wrap gap-1.5">
-          <div className="flex items-center bg-purple-50 text-purple-700 text-[8px] font-bold px-2 py-1 rounded-full border border-purple-200">
-            <Shuffle className="w-2.5 h-2.5 mr-1"/>RANDOM ASSIGN
+          <div className="flex items-center bg-purple-500/10 text-purple-300 text-[8px] font-bold px-2 py-1 rounded-full border border-purple-500/20">
+            <Shuffle className="w-2.5 h-2.5 mr-1" />RANDOM ASSIGN
           </div>
-          <div className="flex items-center bg-blue-50 text-[#0069D9] text-[8px] font-bold px-2 py-1 rounded-full border border-blue-200">
-            <MapPin className="w-2.5 h-2.5 mr-1"/>{active.verifierRegions.length} KECAMATAN
+          <div className="flex items-center bg-blue-500/10 text-blue-400 text-[8px] font-bold px-2 py-1 rounded-full border border-blue-500/20">
+            <MapPin className="w-2.5 h-2.5 mr-1" />{active.verifierRegions.length} KECAMATAN
           </div>
-          <div className="flex items-center bg-slate-100 text-slate-600 text-[8px] font-bold px-2 py-1 rounded-full border border-slate-200">
-            <Lock className="w-2.5 h-2.5 mr-1"/>ANONIM
+          <div className="flex items-center bg-white/5 text-slate-300 text-[8px] font-bold px-2 py-1 rounded-full border border-white/10">
+            <Lock className="w-2.5 h-2.5 mr-1" />ANONIM
           </div>
-          <div className="flex items-center bg-amber-50 text-[#DFA000] text-[8px] font-bold px-2 py-1 rounded-full border border-amber-200">
-            <ImageIcon className="w-2.5 h-2.5 mr-1"/>MIN {active.photoMin} FOTO
+          <div className="flex items-center bg-gold-500/10 text-gold-400 text-[8px] font-bold px-2 py-1 rounded-full border border-gold-500/20">
+            <ImageIcon className="w-2.5 h-2.5 mr-1" />MIN {active.photoMin} FOTO
           </div>
         </div>
 
         {/* Map area */}
-        <div className="relative h-28 bg-[#E8F1FA] rounded-2xl overflow-hidden">
-          <svg viewBox="0 0 400 200" className="w-full h-full opacity-40" fill="currentColor">
-            <path d="M0 80 Q100 50 200 100 T400 80 V200 H0 Z" fill="rgba(0,105,217,0.05)" />
-            <path d="M80 0 L100 200 M0 80 L400 120 M250 0 L280 200" stroke="rgba(255,255,255,0.8)" strokeWidth="5" strokeLinecap="round" />
+        <div className="relative h-28 bg-base rounded-2xl overflow-hidden border border-white/[0.06]">
+          <svg viewBox="0 0 400 200" className="w-full h-full opacity-30" fill="currentColor">
+            <path d="M0 80 Q100 50 200 100 T400 80 V200 H0 Z" fill="rgba(16,185,129,0.08)" />
+            <path d="M80 0 L100 200 M0 80 L400 120 M250 0 L280 200" stroke="rgba(148,163,184,0.3)" strokeWidth="3" strokeLinecap="round" />
           </svg>
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center">
-            <div className="bg-white px-3 py-1 rounded-lg shadow-md mb-1 text-[9px] font-bold text-[#0D1B3E] max-w-[180px] text-center truncate">{active.title}</div>
+            <div className="bg-surface px-3 py-1 rounded-lg shadow-lg mb-1 text-[9px] font-bold text-slate-100 max-w-[180px] text-center truncate border border-white/10">{active.title}</div>
             <div className="relative flex items-center justify-center">
-              <span className="absolute w-6 h-6 bg-[#DFA000] rounded-full animate-ping opacity-50"></span>
-              <MapPin className="relative h-6 w-6 text-[#0069D9] drop-shadow-lg z-10" fill="#fff" />
+              <span className="absolute w-6 h-6 bg-gold-500 rounded-full animate-ping opacity-40"></span>
+              <MapPin className="relative h-6 w-6 text-brand-400 drop-shadow-lg z-10" fill="#0B1120" />
             </div>
           </div>
           {active.anomalyLevel && (
-            <div className="absolute top-2 right-2 bg-[#C0392B] text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full flex items-center">
-              <AlertTriangle className="w-2.5 h-2.5 mr-0.5"/>{active.anomalyLevel}
+            <div className="absolute top-2 right-2 bg-red-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full flex items-center">
+              <AlertTriangle className="w-2.5 h-2.5 mr-0.5" />{active.anomalyLevel}
             </div>
           )}
-          <div className="absolute bottom-2 left-2 bg-white/90 px-2 py-0.5 rounded text-[9px] font-medium text-slate-600">{active.distance} dari Anda</div>
+          <div className="absolute bottom-2 left-2 bg-surface/90 px-2 py-0.5 rounded text-[9px] font-medium text-slate-300 border border-white/10">{active.distance} dari Anda</div>
         </div>
 
         {/* Task Info Card */}
-        <div className="bg-white rounded-2xl p-3 shadow-sm border border-slate-100">
+        <div className="bg-surface rounded-2xl p-3 border border-white/[0.06]">
           <div className="flex items-start justify-between mb-2">
             <div className="flex items-center space-x-2">
               <div className={`w-7 h-7 ${meta.bg} ${meta.color} rounded-lg flex items-center justify-center`}><Icon className="w-4 h-4" /></div>
               <div>
                 <span className={`text-[8px] font-bold uppercase tracking-wider ${meta.color}`}>{meta.label}</span>
-                <h3 className="font-bold text-[#0D1B3E] text-[11px] leading-tight">{active.title}</h3>
+                <h3 className="font-bold text-slate-100 text-[11px] leading-tight">{active.title}</h3>
               </div>
             </div>
-            <div className="bg-[#DFA000] text-white px-2 py-0.5 rounded-full text-[10px] font-bold">Rp {active.reward.toLocaleString('id-ID')}</div>
+            <div className="bg-gold-500 text-[#0B1120] px-2 py-0.5 rounded-full text-[10px] font-bold font-data">Rp {active.reward.toLocaleString('id-ID')}</div>
           </div>
 
           <div className="space-y-1 text-[10px] mb-2">
-            <div className="flex justify-between text-slate-500"><span>Nilai Proyek:</span><span className="font-bold text-[#0D1B3E]">{active.projectValue}</span></div>
+            <div className="flex justify-between text-slate-500"><span>Nilai Proyek:</span><span className="font-bold text-slate-200 font-data">{active.projectValue}</span></div>
             <div className="flex justify-between text-slate-500"><span>Konsensus:</span><ConsensusIndicator done={active.consensus.done} total={active.consensus.total} /></div>
-            <div className="flex justify-between text-slate-500"><span>Verifier dari:</span><span className="font-medium text-[#0069D9]">{active.verifierRegions.length} kecamatan berbeda</span></div>
+            <div className="flex justify-between text-slate-500"><span>Verifier dari:</span><span className="font-medium text-blue-400">{active.verifierRegions.length} kecamatan</span></div>
           </div>
 
           {/* Staking Notice */}
-          <div className="bg-amber-50 rounded-lg p-2 border border-amber-100 mb-2 flex items-start space-x-2">
-            <Coins className="w-3.5 h-3.5 text-[#DFA000] shrink-0 mt-0.5" />
+          <div className="bg-gold-500/10 rounded-lg p-2 border border-gold-500/20 mb-2 flex items-start space-x-2">
+            <Coins className="w-3.5 h-3.5 text-gold-400 shrink-0 mt-0.5" />
             <div>
-              <p className="text-[9px] font-bold text-[#0D1B3E]">Deposit Stake: Rp {active.stakeAmount.toLocaleString('id-ID')}</p>
+              <p className="text-[9px] font-bold text-slate-100">Deposit Stake: Rp {active.stakeAmount.toLocaleString('id-ID')}</p>
               <p className="text-[8px] text-slate-500">Dikembalikan + reward jika jujur. Hangus jika curang.</p>
             </div>
           </div>
 
-          {/* Structured Checklist */}
-          <div className="bg-slate-50 rounded-lg p-2.5 mb-2 border border-slate-100">
-            <p className="text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">📋 CHECKLIST VERIFIKASI:</p>
+          {/* Checklist */}
+          <div className="bg-white/[0.03] rounded-lg p-2.5 mb-2 border border-white/[0.06]">
+            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">📋 Checklist Verifikasi:</p>
             <div className="space-y-1.5">
               {[
                 { q: "Proyek TERLIHAT di lokasi?", type: "yesno" },
@@ -206,23 +203,23 @@ function TabTugas() {
                 { q: "Ada PEKERJA di lokasi?", type: "yesno" },
                 { q: "Rating kualitas (1-5)", type: "rating" },
               ].map((item, i) => (
-                <div key={i} className="flex items-center justify-between bg-white rounded px-2 py-1.5 border border-slate-100">
-                  <span className="text-[9px] text-slate-700 font-medium flex-1">{item.q}</span>
+                <div key={i} className="flex items-center justify-between bg-white/[0.03] rounded px-2 py-1.5 border border-white/[0.06]">
+                  <span className="text-[9px] text-slate-300 font-medium flex-1">{item.q}</span>
                   {item.type === 'yesno' && (
                     <div className="flex space-x-1 shrink-0">
-                      <button className="text-[7px] font-bold px-1.5 py-0.5 rounded bg-green-50 text-[#27AE60] border border-green-200">YA</button>
-                      <button className="text-[7px] font-bold px-1.5 py-0.5 rounded bg-red-50 text-[#C0392B] border border-red-200">TIDAK</button>
+                      <button className="text-[7px] font-bold px-1.5 py-0.5 rounded bg-brand-500/10 text-brand-400 border border-brand-500/20">YA</button>
+                      <button className="text-[7px] font-bold px-1.5 py-0.5 rounded bg-red-500/10 text-red-400 border border-red-500/20">TIDAK</button>
                     </div>
                   )}
                   {item.type === 'percent' && (
                     <div className="flex items-center space-x-0.5 shrink-0">
-                      <input type="number" placeholder="0" className="w-8 text-center text-[9px] font-bold border border-slate-200 rounded py-0.5" readOnly />
+                      <input type="number" placeholder="0" className="w-8 text-center text-[9px] font-bold bg-white/5 border border-white/10 rounded py-0.5 text-slate-200" readOnly />
                       <span className="text-[9px] text-slate-500 font-bold">%</span>
                     </div>
                   )}
                   {item.type === 'rating' && (
                     <div className="flex space-x-0.5 shrink-0">
-                      {[1,2,3,4,5].map(s => <Star key={s} className="w-3 h-3 text-slate-300 cursor-pointer hover:text-[#DFA000]" />)}
+                      {[1, 2, 3, 4, 5].map(s => <Star key={s} className="w-3 h-3 text-slate-600 cursor-pointer hover:text-gold-400" />)}
                     </div>
                   )}
                 </div>
@@ -231,79 +228,79 @@ function TabTugas() {
           </div>
 
           {/* Photo Requirements */}
-          <div className="bg-blue-50 rounded-lg p-2.5 mb-2 border border-blue-100">
-            <p className="text-[9px] font-bold text-[#0069D9] uppercase tracking-wider mb-1">📸 FOTO WAJIB (min {active.photoMin}):</p>
-            <div className="space-y-1 text-[9px] text-slate-600">
-              <div className="flex items-center"><CheckCircle2 className="w-2.5 h-2.5 text-[#27AE60] mr-1 shrink-0"/>Dari kamera langsung (bukan galeri)</div>
-              <div className="flex items-center"><CheckCircle2 className="w-2.5 h-2.5 text-[#27AE60] mr-1 shrink-0"/>GPS & timestamp auto-embed EXIF</div>
-              <div className="flex items-center"><CheckCircle2 className="w-2.5 h-2.5 text-[#27AE60] mr-1 shrink-0"/>Sudut berbeda (AI angle check)</div>
-              <div className="flex items-center"><ShieldAlert className="w-2.5 h-2.5 text-[#C0392B] mr-1 shrink-0"/>Foto duplikat = auto-suspend!</div>
+          <div className="bg-blue-500/[0.07] rounded-lg p-2.5 mb-2 border border-blue-500/15">
+            <p className="text-[9px] font-bold text-blue-400 uppercase tracking-wider mb-1">📸 Foto Wajib (min {active.photoMin}):</p>
+            <div className="space-y-1 text-[9px] text-slate-400">
+              <div className="flex items-center"><CheckCircle2 className="w-2.5 h-2.5 text-brand-400 mr-1 shrink-0" />Dari kamera langsung (bukan galeri)</div>
+              <div className="flex items-center"><CheckCircle2 className="w-2.5 h-2.5 text-brand-400 mr-1 shrink-0" />GPS & timestamp auto-embed EXIF</div>
+              <div className="flex items-center"><CheckCircle2 className="w-2.5 h-2.5 text-brand-400 mr-1 shrink-0" />Sudut berbeda (AI angle check)</div>
+              <div className="flex items-center"><ShieldAlert className="w-2.5 h-2.5 text-red-400 mr-1 shrink-0" />Foto duplikat = auto-suspend!</div>
             </div>
           </div>
 
           {active.status === 'pending_consensus' ? (
-            <div className="bg-orange-50 border border-orange-100 rounded-lg p-2.5 text-center">
-              <Clock className="w-4 h-4 text-orange-500 mx-auto mb-1" />
-              <p className="text-[10px] font-bold text-orange-700">Menunggu Konsensus...</p>
-              <p className="text-[8px] text-orange-500 mt-0.5">Butuh {active.consensus.total - active.consensus.done} warga lagi dari kecamatan berbeda</p>
+            <div className="bg-orange-500/[0.07] border border-orange-500/15 rounded-lg p-2.5 text-center">
+              <Clock className="w-4 h-4 text-orange-400 mx-auto mb-1" />
+              <p className="text-[10px] font-bold text-orange-300">Menunggu Konsensus...</p>
+              <p className="text-[8px] text-orange-400/80 mt-0.5">Butuh {active.consensus.total - active.consensus.done} warga lagi dari kecamatan berbeda</p>
               <div className="flex justify-center mt-1.5"><ConsensusIndicator done={active.consensus.done} total={active.consensus.total} /></div>
               {active.consensus.done >= 2 && (
-                <div className="mt-1.5 bg-amber-50 border border-amber-200 rounded p-1.5">
-                  <p className="text-[8px] font-bold text-amber-700">⚠️ AI Outlier Detection Active</p>
-                  <p className="text-[7px] text-amber-600">Deviasi laporan antar warga sedang dianalisis</p>
+                <div className="mt-1.5 bg-gold-500/10 border border-gold-500/20 rounded p-1.5">
+                  <p className="text-[8px] font-bold text-gold-400">⚠️ AI Outlier Detection Active</p>
+                  <p className="text-[7px] text-gold-400/70">Deviasi laporan antar warga sedang dianalisis</p>
                 </div>
               )}
             </div>
           ) : (
             <div className="space-y-1.5">
               {offlineQueue.length > 0 && (
-                <div className="bg-orange-50 border border-orange-200 rounded-xl p-2.5 space-y-1.5">
+                <div className="bg-orange-500/[0.07] border border-orange-500/20 rounded-xl p-2.5 space-y-1.5">
                   <div className="flex justify-between items-center">
-                    <span className="text-[9px] font-bold text-orange-800">SQLite Queue: {offlineQueue.length} Foto</span>
-                    <button 
+                    <span className="text-[9px] font-bold text-orange-300 font-data">SQLite Queue: {offlineQueue.length} Foto</span>
+                    <button
                       onClick={() => {
                         setIsSyncing(true);
                         setTimeout(() => {
                           setIsSyncing(false);
                           setOfflineQueue([]);
                           setCameraCaptured(true);
-                          alert("Berhasil sinkronisasi! Hash gambar diunggah ke blockchain Hyperledger Fabric.");
+                          alert("Berhasil sinkronisasi! Hash gambar diunggah ke Hyperledger Fabric.");
                         }, 1500);
                       }}
                       disabled={isSyncing}
-                      className="text-[8px] font-black bg-[#0D1B3E] text-white px-2 py-1 rounded hover:bg-slate-800 transition-colors"
+                      className="text-[8px] font-black bg-brand-500 text-[#022c22] px-2 py-1 rounded hover:bg-brand-400 transition-colors"
                     >
                       {isSyncing ? 'Sinkron...' : 'Sync ke DLT'}
                     </button>
                   </div>
-                  <p className="text-[7px] text-orange-600 leading-tight">Mendeteksi sinyal kembali. Ketuk sync untuk mengunggah stempel waktu & GPS yang tersimpan di SQLite lokal.</p>
+                  <p className="text-[7px] text-orange-400/80 leading-tight">Sinyal kembali. Ketuk sync untuk mengunggah stempel waktu & GPS dari SQLite lokal.</p>
                 </div>
               )}
 
               {cameraCaptured && (
-                <div className="bg-green-50 border border-green-200 rounded-xl p-2 text-center text-[9px] font-bold text-green-700">
+                <div className="bg-brand-500/10 border border-brand-500/20 rounded-xl p-2 text-center text-[9px] font-bold text-brand-400">
                   ✓ Foto Terverifikasi AI & Siap Dikirim!
                 </div>
               )}
 
               <div className="grid grid-cols-2 gap-2">
-                <button 
+                <button
                   onClick={handleCapture}
-                  className="flex items-center justify-center space-x-1.5 py-2 border-2 border-slate-200 rounded-xl font-semibold text-slate-700 text-xs active:scale-95 hover:bg-slate-50 transition-colors"
+                  className="flex items-center justify-center space-x-1.5 py-2 border border-white/10 bg-white/5 rounded-xl font-semibold text-slate-200 text-xs active:scale-95 hover:bg-white/10 transition-colors"
                 >
                   <Camera className="w-4 h-4" /><span>{offlineMode ? "Simpan Offline" : "Kamera"}</span>
                 </button>
-                <button 
+                <button
                   onClick={() => alert("Kirim laporan ke consensus pool warga...")}
                   disabled={!cameraCaptured && offlineQueue.length === 0}
-                  className={`flex items-center justify-center space-x-1.5 py-2 rounded-xl font-semibold shadow-sm text-xs active:scale-95 transition-all ${
-                    cameraCaptured ? 'bg-[#27AE60] text-white' : 'bg-[#0D1B3E] text-white opacity-50 cursor-not-allowed'
+                  className={`flex items-center justify-center space-x-1.5 py-2 rounded-xl font-semibold text-xs active:scale-95 transition-all ${
+                    cameraCaptured ? 'bg-brand-500 text-[#022c22]' : 'bg-white/5 text-slate-500 border border-white/10 opacity-60 cursor-not-allowed'
                   }`}
                 >
                   <Upload className="w-4 h-4" /><span>Kirim</span>
                 </button>
               </div>
-              <p className="text-[7px] text-center text-slate-400">🔒 AI verifikasi: pHash duplikat, EXIF forensics, GPS match, angle diversity</p>
+              <p className="text-[7px] text-center text-slate-600">🔒 AI: pHash duplikat, EXIF forensics, GPS match, angle diversity</p>
             </div>
           )}
         </div>
@@ -316,33 +313,33 @@ function TabTugas() {
     <div className="px-5 py-4 space-y-4">
       {/* Stats bar */}
       <div className="grid grid-cols-3 gap-2">
-        <div className="bg-blue-50 rounded-xl p-2.5 text-center border border-blue-100">
-          <p className="text-lg font-black text-[#0069D9]">{TASKS.filter(t => t.status === 'available').length}</p>
-          <p className="text-[9px] text-slate-500 font-bold">Tersedia</p>
+        <div className="bg-blue-500/10 rounded-xl p-2.5 text-center border border-blue-500/15">
+          <p className="text-lg font-black text-blue-400 font-data">{TASKS.filter(t => t.status === 'available').length}</p>
+          <p className="text-[9px] text-slate-400 font-bold">Tersedia</p>
         </div>
-        <div className="bg-amber-50 rounded-xl p-2.5 text-center border border-amber-100">
-          <p className="text-lg font-black text-[#DFA000]">{TASKS.filter(t => t.status === 'in_progress' || t.status === 'pending_consensus').length}</p>
-          <p className="text-[9px] text-slate-500 font-bold">Proses</p>
+        <div className="bg-gold-500/10 rounded-xl p-2.5 text-center border border-gold-500/15">
+          <p className="text-lg font-black text-gold-400 font-data">{TASKS.filter(t => t.status === 'in_progress' || t.status === 'pending_consensus').length}</p>
+          <p className="text-[9px] text-slate-400 font-bold">Proses</p>
         </div>
-        <div className="bg-green-50 rounded-xl p-2.5 text-center border border-green-100">
-          <p className="text-lg font-black text-[#27AE60]">{TASKS.filter(t => t.status === 'completed').length}</p>
-          <p className="text-[9px] text-slate-500 font-bold">Selesai</p>
+        <div className="bg-brand-500/10 rounded-xl p-2.5 text-center border border-brand-500/15">
+          <p className="text-lg font-black text-brand-400 font-data">{TASKS.filter(t => t.status === 'completed').length}</p>
+          <p className="text-[9px] text-slate-400 font-bold">Selesai</p>
         </div>
       </div>
 
       {/* Anti-Collusion notice */}
-      <div className="bg-purple-50 rounded-xl p-2.5 border border-purple-100 flex items-start space-x-2">
-        <Shuffle className="w-4 h-4 text-purple-600 shrink-0 mt-0.5" />
+      <div className="bg-purple-500/[0.07] rounded-xl p-2.5 border border-purple-500/15 flex items-start space-x-2">
+        <Shuffle className="w-4 h-4 text-purple-400 shrink-0 mt-0.5" />
         <div>
-          <p className="text-[10px] font-bold text-purple-800">Penugasan Acak Anti-Kolusi</p>
-          <p className="text-[8px] text-purple-600">Task di-assign random dari kecamatan berbeda. Identitas antar verifier dirahasiakan.</p>
+          <p className="text-[10px] font-bold text-purple-300">Penugasan Acak Anti-Kolusi</p>
+          <p className="text-[8px] text-purple-400/80">Task di-assign random dari kecamatan berbeda. Identitas antar verifier dirahasiakan.</p>
         </div>
       </div>
 
       {/* Task List */}
-      <h4 className="font-bold text-[#0D1B3E] text-sm flex items-center justify-between">
+      <h4 className="font-bold text-slate-100 text-sm flex items-center justify-between">
         <span>📋 Tugas Mining</span>
-        <span className="text-[10px] text-slate-400 font-medium">5 tugas</span>
+        <span className="text-[10px] text-slate-500 font-medium">{TASKS.length} tugas</span>
       </h4>
 
       <div className="space-y-2.5">
@@ -354,10 +351,10 @@ function TabTugas() {
             <div
               key={task.id}
               onClick={() => task.status !== 'completed' ? setSelectedTask(task.id) : null}
-              className={`bg-white p-3 rounded-2xl border shadow-sm transition-all active:scale-[0.98] ${
-                task.status === 'completed' ? 'border-green-100 opacity-70' :
-                task.status === 'pending_consensus' ? 'border-orange-200 cursor-pointer' :
-                'border-slate-100 cursor-pointer hover:-translate-y-0.5'
+              className={`bg-surface p-3 rounded-2xl border transition-all active:scale-[0.98] ${
+                task.status === 'completed' ? 'border-brand-500/15 opacity-60' :
+                task.status === 'pending_consensus' ? 'border-orange-500/25 cursor-pointer' :
+                'border-white/[0.06] cursor-pointer hover:-translate-y-0.5 hover:border-brand-500/30'
               }`}
             >
               <div className="flex items-start space-x-3">
@@ -369,21 +366,20 @@ function TabTugas() {
                     <span className={`text-[9px] font-bold uppercase tracking-wider ${meta.color}`}>{meta.label}</span>
                     <span className={`text-[8px] font-bold ${stMeta.color} ${stMeta.bg} px-1.5 py-0.5 rounded-full`}>{stMeta.label}</span>
                   </div>
-                  <h5 className="font-bold text-[#0D1B3E] text-xs leading-tight mb-1">{task.title}</h5>
+                  <h5 className="font-bold text-slate-100 text-xs leading-tight mb-1">{task.title}</h5>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
-                      <span className="text-[10px] text-slate-400 flex items-center"><MapPin className="w-2.5 h-2.5 mr-0.5"/>{task.distance}</span>
-                      {task.status !== 'completed' && <span className="text-[10px] text-slate-400 flex items-center"><Clock className="w-2.5 h-2.5 mr-0.5"/>{task.deadline}</span>}
+                      <span className="text-[10px] text-slate-500 flex items-center"><MapPin className="w-2.5 h-2.5 mr-0.5" />{task.distance}</span>
+                      {task.status !== 'completed' && <span className="text-[10px] text-slate-500 flex items-center"><Clock className="w-2.5 h-2.5 mr-0.5" />{task.deadline}</span>}
                     </div>
-                    <span className="text-xs font-bold text-[#DFA000]">Rp {task.reward.toLocaleString('id-ID')}</span>
+                    <span className="text-xs font-bold text-gold-400 font-data">Rp {task.reward.toLocaleString('id-ID')}</span>
                   </div>
-                  {/* Consensus + Anti-collusion info */}
                   <div className="mt-1.5 flex items-center justify-between">
                     <ConsensusIndicator done={task.consensus.done} total={task.consensus.total} />
                     <div className="flex items-center space-x-1">
-                      <span className="text-[7px] text-purple-500 font-bold bg-purple-50 px-1 py-0.5 rounded">{task.verifierRegions.length} kec.</span>
-                      {task.status !== 'completed' && <ChevronRight className="w-4 h-4 text-slate-300" />}
-                      {task.status === 'completed' && <CheckCircle2 className="w-4 h-4 text-[#27AE60]" />}
+                      <span className="text-[7px] text-purple-300 font-bold bg-purple-500/10 px-1 py-0.5 rounded">{task.verifierRegions.length} kec.</span>
+                      {task.status !== 'completed' && <ChevronRight className="w-4 h-4 text-slate-600" />}
+                      {task.status === 'completed' && <CheckCircle2 className="w-4 h-4 text-brand-400" />}
                     </div>
                   </div>
                 </div>
@@ -400,43 +396,43 @@ function TabTugas() {
 function TabPeta() {
   return (
     <div className="px-5 py-4 space-y-4">
-      <div className="relative h-80 bg-[#E8F1FA] rounded-2xl overflow-hidden border border-slate-200">
-        <svg viewBox="0 0 400 350" className="w-full h-full opacity-60 text-slate-400" fill="currentColor">
-          <path d="M0 100 Q100 50 200 150 T400 100 V350 H0 Z" fill="rgba(0,105,217,0.05)" />
-          <path d="M0 180 Q80 200 150 140 T300 220 T400 170 V350 H0 Z" fill="rgba(39,174,96,0.05)" />
-          <path d="M80 0 L100 350 M200 0 L220 350 M320 0 L340 350 M0 80 L400 100 M0 200 L400 240" stroke="rgba(255,255,255,0.8)" strokeWidth="5" strokeLinecap="round" />
+      <div className="relative h-80 bg-base rounded-2xl overflow-hidden border border-white/[0.06]">
+        <svg viewBox="0 0 400 350" className="w-full h-full opacity-40 text-slate-600" fill="currentColor">
+          <path d="M0 100 Q100 50 200 150 T400 100 V350 H0 Z" fill="rgba(16,185,129,0.06)" />
+          <path d="M0 180 Q80 200 150 140 T300 220 T400 170 V350 H0 Z" fill="rgba(59,130,246,0.05)" />
+          <path d="M80 0 L100 350 M200 0 L220 350 M320 0 L340 350 M0 80 L400 100 M0 200 L400 240" stroke="rgba(148,163,184,0.2)" strokeWidth="3" strokeLinecap="round" />
         </svg>
         <div className="absolute top-[30%] left-[25%]">
           <div className="relative flex flex-col items-center">
-            <span className="absolute w-6 h-6 bg-[#C0392B] rounded-full animate-ping opacity-40"></span>
-            <MapPin className="relative h-7 w-7 text-[#C0392B] drop-shadow-lg z-10" fill="#fff" />
-            <span className="bg-white text-[8px] font-bold text-[#0D1B3E] px-1.5 py-0.5 rounded shadow mt-1 whitespace-nowrap">Aspal +44%</span>
+            <span className="absolute w-6 h-6 bg-red-500 rounded-full animate-ping opacity-40"></span>
+            <MapPin className="relative h-7 w-7 text-red-400 drop-shadow-lg z-10" fill="#0B1120" />
+            <span className="bg-surface text-[8px] font-bold text-slate-100 px-1.5 py-0.5 rounded shadow mt-1 whitespace-nowrap border border-white/10">Aspal +44%</span>
           </div>
         </div>
         <div className="absolute top-[50%] left-[55%]">
           <div className="relative flex flex-col items-center">
-            <MapPin className="relative h-6 w-6 text-[#DFA000] drop-shadow z-10" fill="#fff" />
-            <span className="bg-white text-[8px] font-bold text-[#0D1B3E] px-1.5 py-0.5 rounded shadow mt-1 whitespace-nowrap">Jembatan</span>
+            <MapPin className="relative h-6 w-6 text-gold-400 drop-shadow z-10" fill="#0B1120" />
+            <span className="bg-surface text-[8px] font-bold text-slate-100 px-1.5 py-0.5 rounded shadow mt-1 whitespace-nowrap border border-white/10">Jembatan</span>
           </div>
         </div>
         <div className="absolute top-[40%] left-[75%]">
           <div className="relative flex flex-col items-center">
-            <MapPin className="relative h-6 w-6 text-[#27AE60] drop-shadow z-10" fill="#fff" />
-            <span className="bg-white text-[8px] font-bold text-[#0D1B3E] px-1.5 py-0.5 rounded shadow mt-1 whitespace-nowrap">SDN 03</span>
+            <MapPin className="relative h-6 w-6 text-brand-400 drop-shadow z-10" fill="#0B1120" />
+            <span className="bg-surface text-[8px] font-bold text-slate-100 px-1.5 py-0.5 rounded shadow mt-1 whitespace-nowrap border border-white/10">SDN 03</span>
           </div>
         </div>
         <div className="absolute top-[60%] left-[40%]">
-          <div className="w-4 h-4 bg-[#0069D9] rounded-full border-3 border-white shadow-lg"></div>
-          <span className="text-[8px] text-[#0069D9] font-bold mt-0.5 block">Anda</span>
+          <div className="w-4 h-4 bg-blue-500 rounded-full border-2 border-base shadow-lg"></div>
+          <span className="text-[8px] text-blue-400 font-bold mt-0.5 block">Anda</span>
         </div>
-        <div className="absolute bottom-3 left-3 bg-white/90 backdrop-blur-sm p-2 rounded-lg shadow-sm border border-slate-200 text-[9px]">
-          <div className="flex items-center space-x-2 mb-1"><div className="w-2 h-2 rounded-full bg-[#C0392B]" /><span>Anomali</span></div>
-          <div className="flex items-center space-x-2 mb-1"><div className="w-2 h-2 rounded-full bg-[#DFA000]" /><span>Proses</span></div>
-          <div className="flex items-center space-x-2"><div className="w-2 h-2 rounded-full bg-[#27AE60]" /><span>Normal</span></div>
+        <div className="absolute bottom-3 left-3 glass-panel p-2 rounded-lg text-[9px] text-slate-300">
+          <div className="flex items-center space-x-2 mb-1"><div className="w-2 h-2 rounded-full bg-red-500" /><span>Anomali</span></div>
+          <div className="flex items-center space-x-2 mb-1"><div className="w-2 h-2 rounded-full bg-gold-500" /><span>Proses</span></div>
+          <div className="flex items-center space-x-2"><div className="w-2 h-2 rounded-full bg-brand-500" /><span>Normal</span></div>
         </div>
-        <button className="absolute bottom-3 right-3 w-9 h-9 bg-white rounded-full shadow border border-slate-200 flex items-center justify-center text-slate-600"><Target className="w-4 h-4" /></button>
+        <button className="absolute bottom-3 right-3 w-9 h-9 glass-panel rounded-full flex items-center justify-center text-slate-300"><Target className="w-4 h-4" /></button>
       </div>
-      <p className="text-center text-[10px] text-slate-400">📍 3 proyek ditemukan dalam radius 5 km dari Anda</p>
+      <p className="text-center text-[10px] text-slate-500">📍 3 proyek ditemukan dalam radius 5 km dari Anda</p>
     </div>
   );
 }
@@ -467,57 +463,42 @@ function TabReward() {
 
   return (
     <div className="px-5 py-4 space-y-4 relative">
-      <div className="bg-gradient-to-br from-[#0D1B3E] to-[#1a2f5e] rounded-2xl p-5 text-white relative overflow-hidden">
+      <div className="rounded-2xl p-5 text-white relative overflow-hidden border border-brand-500/20" style={{ background: 'linear-gradient(135deg, #059669 0%, #0B1120 70%)' }}>
         <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2"></div>
-        <p className="text-xs text-white/60 font-medium mb-1">Saldo Reward</p>
-        <p className="text-3xl font-black tracking-tight mb-3">Rp {points.toLocaleString('id-ID')}</p>
+        <p className="text-xs text-white/70 font-medium mb-1">Saldo Reward</p>
+        <p className="text-3xl font-black tracking-tight mb-3 font-data">Rp {points.toLocaleString('id-ID')}</p>
         <div className="flex items-center space-x-4 text-[10px]">
-          <div><span className="text-white/50">Total diterima:</span> <span className="font-bold text-[#DFA000]">Rp {totalEarned.toLocaleString('id-ID')}</span></div>
-          <div><span className="text-white/50">Bulan ini:</span> <span className="font-bold text-[#27AE60]">+Rp 35.000</span></div>
+          <div><span className="text-white/50">Total diterima:</span> <span className="font-bold text-gold-400 font-data">Rp {totalEarned.toLocaleString('id-ID')}</span></div>
+          <div><span className="text-white/50">Bulan ini:</span> <span className="font-bold text-brand-400 font-data">+Rp 35.000</span></div>
         </div>
-        <button onClick={() => alert("Tarik saldo ke LinkAja / DANA / QRIS...")} className="mt-4 w-full py-2.5 bg-[#DFA000] text-[#0D1B3E] rounded-xl text-xs font-bold active:scale-95 transition-transform">Tarik ke e-Wallet / Bank</button>
+        <button onClick={() => alert("Tarik saldo ke LinkAja / DANA / QRIS...")} className="mt-4 w-full py-2.5 bg-gold-500 text-[#0B1120] rounded-xl text-xs font-bold active:scale-95 transition-transform">Tarik ke e-Wallet / Bank</button>
       </div>
 
-      {/* BPD Tax integration widget */}
-      <div className="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 space-y-3">
-        <div className="flex items-center space-x-2 text-[#0D1B3E]">
-          <Shield className="w-5 h-5 text-[#0069D9]" />
+      {/* BPD Tax integration */}
+      <div className="bg-surface rounded-2xl p-4 border border-white/[0.06] space-y-3">
+        <div className="flex items-center space-x-2 text-slate-100">
+          <Shield className="w-5 h-5 text-blue-400" />
           <h4 className="font-bold text-xs">PBB / Pajak Daerah via BPD Jateng</h4>
         </div>
-        <p className="text-[10px] text-slate-500 leading-tight">Gunakan Loyalty Points Anda untuk langsung mengurangi kewajiban Pajak Bumi & Bangunan (PBB) Anda via Bank Pembangunan Daerah.</p>
-        
+        <p className="text-[10px] text-slate-500 leading-tight">Gunakan Loyalty Points untuk langsung mengurangi kewajiban Pajak Bumi & Bangunan (PBB) via Bank Pembangunan Daerah.</p>
+
         {pbbPaid ? (
-          <div className="bg-green-50 border border-green-200 rounded-xl p-2.5 flex items-center space-x-2">
-            <CheckCircle2 className="w-4 h-4 text-[#27AE60]" />
+          <div className="bg-brand-500/10 border border-brand-500/20 rounded-xl p-2.5 flex items-center space-x-2">
+            <CheckCircle2 className="w-4 h-4 text-brand-400" />
             <div>
-              <p className="text-[10px] font-bold text-green-800">Pembayaran Sukses</p>
-              <p className="text-[8px] text-green-600">Potongan Rp45.000 berhasil diaplikasikan ke NOP Pajak Anda.</p>
+              <p className="text-[10px] font-bold text-brand-300">Pembayaran Sukses</p>
+              <p className="text-[8px] text-slate-400">Potongan Rp45.000 diaplikasikan ke NOP Pajak Anda.</p>
             </div>
           </div>
         ) : (
-          <div className="bg-slate-50 rounded-xl p-3 border border-slate-150 space-y-2">
-            <div className="flex justify-between text-[10px]">
-              <span className="text-slate-500 font-medium">NOP Pajak Anda:</span>
-              <span className="font-bold text-[#0D1B3E]">32.04.120.003...</span>
-            </div>
-            <div className="flex justify-between text-[10px]">
-              <span className="text-slate-500 font-medium">Tagihan PBB Aktif:</span>
-              <span className="font-bold text-[#0D1B3E]">Rp 120.000</span>
-            </div>
-            <div className="flex justify-between text-[10px]">
-              <span className="text-slate-500 font-medium">Subsidi Loyalty Points:</span>
-              <span className="font-bold text-[#27AE60]">-Rp {points.toLocaleString('id-ID')}</span>
-            </div>
-            <hr className="border-slate-200" />
-            <div className="flex justify-between text-[10px]">
-              <span className="text-slate-500 font-bold">Sisa Tagihan Bersih:</span>
-              <span className="font-black text-[#0D1B3E]">Rp {(120000 - points).toLocaleString('id-ID')}</span>
-            </div>
-            
-            <button 
-              onClick={() => setShowPbbModal(true)}
-              className="w-full mt-2 py-2 bg-[#0069D9] text-white rounded-lg text-[10px] font-bold hover:bg-[#0056b3] transition-colors"
-            >
+          <div className="bg-white/[0.03] rounded-xl p-3 border border-white/[0.06] space-y-2">
+            <div className="flex justify-between text-[10px]"><span className="text-slate-500 font-medium">NOP Pajak Anda:</span><span className="font-bold text-slate-200 font-data">32.04.120.003...</span></div>
+            <div className="flex justify-between text-[10px]"><span className="text-slate-500 font-medium">Tagihan PBB Aktif:</span><span className="font-bold text-slate-200 font-data">Rp 120.000</span></div>
+            <div className="flex justify-between text-[10px]"><span className="text-slate-500 font-medium">Subsidi Loyalty Points:</span><span className="font-bold text-brand-400 font-data">-Rp {points.toLocaleString('id-ID')}</span></div>
+            <hr className="border-white/10" />
+            <div className="flex justify-between text-[10px]"><span className="text-slate-400 font-bold">Sisa Tagihan Bersih:</span><span className="font-black text-slate-100 font-data">Rp {(120000 - points).toLocaleString('id-ID')}</span></div>
+
+            <button onClick={() => setShowPbbModal(true)} className="w-full mt-2 py-2 bg-blue-500 text-white rounded-lg text-[10px] font-bold hover:bg-blue-600 transition-colors">
               Potong Tagihan PBB Daerah
             </button>
           </div>
@@ -525,55 +506,46 @@ function TabReward() {
       </div>
 
       {/* Stake Balance */}
-      <div className="bg-amber-50 rounded-xl p-3 border border-amber-100 flex items-center justify-between">
+      <div className="bg-gold-500/[0.07] rounded-xl p-3 border border-gold-500/15 flex items-center justify-between">
         <div className="flex items-center space-x-2">
-          <Coins className="w-5 h-5 text-[#DFA000]" />
+          <Coins className="w-5 h-5 text-gold-400" />
           <div>
-            <p className="text-[10px] font-bold text-[#0D1B3E]">Deposit Stake Aktif</p>
+            <p className="text-[10px] font-bold text-slate-100">Deposit Stake Aktif</p>
             <p className="text-[8px] text-slate-500">2 task in-progress</p>
           </div>
         </div>
-        <span className="text-sm font-black text-[#DFA000]">Rp 20.000</span>
+        <span className="text-sm font-black text-gold-400 font-data">Rp 20.000</span>
       </div>
 
-      <h4 className="font-bold text-[#0D1B3E] text-sm">Riwayat Reward</h4>
+      <h4 className="font-bold text-slate-100 text-sm">Riwayat Reward</h4>
       <div className="space-y-2">
         {history.map(r => (
-          <div key={r.id} className="bg-white p-3 rounded-xl border border-slate-100 flex items-center justify-between">
+          <div key={r.id} className="bg-surface p-3 rounded-xl border border-white/[0.06] flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${r.amount > 0 ? (r.status === 'success' ? 'bg-green-50 text-[#27AE60]' : 'bg-amber-50 text-[#DFA000]') : 'bg-red-50 text-[#C0392B]'}`}>
-                {r.amount > 0 ? (r.status === 'success' ? <CheckCircle2 className="w-4 h-4"/> : <Clock className="w-4 h-4"/>) : <AlertTriangle className="w-4 h-4"/>}
+              <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${r.amount > 0 ? (r.status === 'success' ? 'bg-brand-500/10 text-brand-400' : 'bg-gold-500/10 text-gold-400') : 'bg-red-500/10 text-red-400'}`}>
+                {r.amount > 0 ? (r.status === 'success' ? <CheckCircle2 className="w-4 h-4" /> : <Clock className="w-4 h-4" />) : <AlertTriangle className="w-4 h-4" />}
               </div>
               <div>
-                <p className="text-[11px] font-bold text-[#0D1B3E] leading-tight">{r.title}</p>
-                <p className="text-[9px] text-slate-400">{r.date}</p>
+                <p className="text-[11px] font-bold text-slate-100 leading-tight">{r.title}</p>
+                <p className="text-[9px] text-slate-500">{r.date}</p>
               </div>
             </div>
-            <span className={`text-xs font-bold ${r.amount > 0 ? (r.status === 'success' ? 'text-[#27AE60]' : 'text-[#DFA000]') : 'text-[#C0392B]'}`}>
+            <span className={`text-xs font-bold font-data ${r.amount > 0 ? (r.status === 'success' ? 'text-brand-400' : 'text-gold-400') : 'text-red-400'}`}>
               {r.amount > 0 ? '+' : ''}Rp {r.amount.toLocaleString('id-ID')}
             </span>
           </div>
         ))}
       </div>
 
-      {/* Confirmation Modal */}
+      {/* Modal */}
       {showPbbModal && (
-        <div className="absolute inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl p-4 w-full max-w-[280px] text-center space-y-4 animate-in zoom-in-95 duration-200">
-            <h5 className="font-bold text-slate-800 text-sm">Konfirmasi Tukar Pajak</h5>
-            <p className="text-[11px] text-slate-600 leading-normal">Apakah Anda yakin ingin menukarkan Rp45.000 Loyalty Points untuk memotong tagihan PBB NOP 32.04.120.003.002-0051.0?</p>
+        <div className="absolute inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-elevated rounded-2xl p-4 w-full max-w-[280px] text-center space-y-4 border border-white/10 animate-fade-up">
+            <h5 className="font-bold text-slate-100 text-sm">Konfirmasi Tukar Pajak</h5>
+            <p className="text-[11px] text-slate-400 leading-normal">Tukarkan Rp45.000 Loyalty Points untuk memotong tagihan PBB NOP 32.04.120.003.002-0051.0?</p>
             <div className="grid grid-cols-2 gap-2">
-              <button 
-                onClick={() => setShowPbbModal(false)}
-                className="py-2 border border-slate-200 text-slate-600 rounded-lg text-xs font-bold"
-              >
-                Batal
-              </button>
-              <button 
-                onClick={handlePayPbb}
-                disabled={isProcessing}
-                className="py-2 bg-[#DFA000] text-[#0D1B3E] rounded-lg text-xs font-bold"
-              >
+              <button onClick={() => setShowPbbModal(false)} className="py-2 border border-white/10 bg-white/5 text-slate-300 rounded-lg text-xs font-bold">Batal</button>
+              <button onClick={handlePayPbb} disabled={isProcessing} className="py-2 bg-gold-500 text-[#0B1120] rounded-lg text-xs font-bold">
                 {isProcessing ? "Memproses..." : "Ya, Tukar"}
               </button>
             </div>
@@ -595,120 +567,104 @@ function TabProfil() {
     setTimeout(() => {
       setIsVerifying(false);
       setVerified(true);
-      alert("✓ Verifikasi Wajah IKD Berhasil! Wajah Anda cocok 99.4% dengan database Dukcapil. Kunci publik tersemat untuk whistleblower digital.");
+      alert("✓ Verifikasi Wajah IKD Berhasil! Wajah cocok 99,4% dengan database Dukcapil.");
     }, 2000);
   };
 
   return (
     <div className="px-5 py-4 space-y-3">
       {/* Profile Card */}
-      <div className="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm text-center">
-        <div className="w-14 h-14 bg-[#0D1B3E] text-white rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-2 ring-4 ring-[#DFA000]/20">A</div>
-        <h3 className="font-bold text-[#0D1B3E] text-base">Andi Pratama</h3>
+      <div className="bg-surface rounded-2xl p-4 border border-white/[0.06] text-center">
+        <div className="w-14 h-14 bg-gradient-to-br from-brand-500 to-brand-600 text-[#022c22] rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-2 ring-4 ring-gold-500/20">A</div>
+        <h3 className="font-bold text-slate-100 text-base">Andi Pratama</h3>
         <p className="text-[10px] text-slate-500 mb-1">Citizen Miner sejak Feb 2026</p>
         <div className="flex items-center justify-center space-x-1">
-          <Star className="w-3 h-3 text-[#DFA000]" fill="#DFA000" />
-          <Star className="w-3 h-3 text-[#DFA000]" fill="#DFA000" />
-          <Star className="w-3 h-3 text-slate-300" fill="#E2E8F0" />
-          <span className="text-[10px] font-bold text-[#DFA000] ml-1">Level 2 — Terlatih</span>
+          <Star className="w-3 h-3 text-gold-400" fill="currentColor" />
+          <Star className="w-3 h-3 text-gold-400" fill="currentColor" />
+          <Star className="w-3 h-3 text-slate-700" fill="currentColor" />
+          <span className="text-[10px] font-bold text-gold-400 ml-1">Level 2 — Terlatih</span>
         </div>
       </div>
 
       {/* Reputation Score */}
-      <div className="bg-white rounded-xl p-3 border border-slate-100">
+      <div className="bg-surface rounded-xl p-3 border border-white/[0.06]">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-[10px] font-bold text-[#0D1B3E] uppercase tracking-wider">🛡️ Reputation Score</span>
-          <span className={`text-lg font-black ${reputationScore >= 60 ? 'text-[#27AE60]' : reputationScore >= 30 ? 'text-[#DFA000]' : 'text-[#C0392B]'}`}>{reputationScore}/100</span>
+          <span className="text-[10px] font-bold text-slate-200 uppercase tracking-wider">🛡️ Reputation Score</span>
+          <span className={`text-lg font-black font-data ${reputationScore >= 60 ? 'text-brand-400' : reputationScore >= 30 ? 'text-gold-400' : 'text-red-400'}`}>{reputationScore}/100</span>
         </div>
-        <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden mb-1.5">
-          <div className="h-full bg-gradient-to-r from-[#27AE60] to-[#27AE60]/70 rounded-full" style={{ width: `${reputationScore}%` }}></div>
+        <div className="w-full h-2 bg-white/5 rounded-full overflow-hidden mb-1.5">
+          <div className="h-full bg-gradient-to-r from-brand-500 to-brand-400 rounded-full" style={{ width: `${reputationScore}%` }}></div>
         </div>
-        <div className="flex justify-between text-[8px] text-slate-400">
-          <span>0 — Suspended</span>
-          <span>30 — Probation</span>
-          <span>60 — Verified ✓</span>
-          <span>80 — Trusted ★</span>
+        <div className="flex justify-between text-[8px] text-slate-600">
+          <span>0 — Suspend</span><span>30 — Probation</span><span>60 — Verified</span><span>80 — Trusted</span>
         </div>
-        <div className="mt-2 bg-green-50 rounded-lg p-2 border border-green-100">
-          <p className="text-[9px] font-bold text-[#27AE60]">✅ Status: Verified Citizen</p>
+        <div className="mt-2 bg-brand-500/10 rounded-lg p-2 border border-brand-500/15">
+          <p className="text-[9px] font-bold text-brand-400">✅ Status: Verified Citizen</p>
           <p className="text-[8px] text-slate-500">Akses proyek menengah, reward standar</p>
         </div>
       </div>
 
       {/* Stats */}
       <div className="grid grid-cols-2 gap-2">
-        <div className="bg-white rounded-xl p-2.5 border border-slate-100 text-center">
-          <p className="text-lg font-black text-[#0D1B3E]">27</p>
-          <p className="text-[8px] text-slate-500 font-medium">Tasks Selesai</p>
-        </div>
-        <div className="bg-white rounded-xl p-2.5 border border-slate-100 text-center">
-          <p className="text-lg font-black text-[#27AE60]">92%</p>
-          <p className="text-[8px] text-slate-500 font-medium">Akurasi</p>
-        </div>
-        <div className="bg-white rounded-xl p-2.5 border border-slate-100 text-center">
-          <p className="text-lg font-black text-[#DFA000]">Rp 405K</p>
-          <p className="text-[8px] text-slate-500 font-medium">Total Earned</p>
-        </div>
-        <div className="bg-white rounded-xl p-2.5 border border-slate-100 text-center">
-          <p className="text-lg font-black text-purple-600">0</p>
-          <p className="text-[8px] text-slate-500 font-medium">Pelanggaran</p>
-        </div>
+        {[["27", "Tasks Selesai", "text-slate-100"], ["92%", "Akurasi", "text-brand-400"], ["Rp 405K", "Total Earned", "text-gold-400"], ["0", "Pelanggaran", "text-purple-400"]].map(([v, l, c]) => (
+          <div key={l} className="bg-surface rounded-xl p-2.5 border border-white/[0.06] text-center">
+            <p className={`text-lg font-black font-data ${c}`}>{v}</p>
+            <p className="text-[8px] text-slate-500 font-medium">{l}</p>
+          </div>
+        ))}
       </div>
 
       {/* Level Progress */}
-      <div className="bg-white rounded-xl p-3 border border-slate-100">
+      <div className="bg-surface rounded-xl p-3 border border-white/[0.06]">
         <div className="flex justify-between items-center mb-1.5">
-          <span className="text-[10px] font-bold text-[#0D1B3E]">Progress ke Level 3 (Ahli)</span>
-          <span className="text-[9px] text-slate-500">27/50 tasks</span>
+          <span className="text-[10px] font-bold text-slate-200">Progress ke Level 3 (Ahli)</span>
+          <span className="text-[9px] text-slate-500 font-data">27/50 tasks</span>
         </div>
-        <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-          <div className="h-full bg-gradient-to-r from-[#DFA000] to-[#DFA000]/70 rounded-full" style={{ width: '54%' }}></div>
+        <div className="w-full h-2 bg-white/5 rounded-full overflow-hidden">
+          <div className="h-full bg-gradient-to-r from-gold-500 to-gold-400 rounded-full" style={{ width: '54%' }}></div>
         </div>
-        <p className="text-[8px] text-slate-400 mt-1">Selesaikan 23 tasks lagi untuk unlock &quot;Progress Report&quot; tasks</p>
+        <p className="text-[8px] text-slate-600 mt-1">Selesaikan 23 tasks lagi untuk unlock &quot;Progress Report&quot; tasks</p>
       </div>
 
-      {/* Camera Scanning Animation */}
+      {/* Face scan */}
       {isVerifying && (
-        <div className="bg-slate-900 text-white rounded-xl p-4 text-center space-y-3 flex flex-col items-center justify-center min-h-[150px] animate-pulse">
-          <div className="relative w-16 h-16 rounded-full border-4 border-[#0069D9] flex items-center justify-center overflow-hidden">
-            <div className="absolute top-0 w-full h-1 bg-[#0069D9] animate-bounce"></div>
-            <User className="w-8 h-8 text-slate-400" />
+        <div className="bg-base text-slate-100 rounded-xl p-4 text-center space-y-3 flex flex-col items-center justify-center min-h-[150px] border border-white/10">
+          <div className="relative w-16 h-16 rounded-full border-4 border-blue-500 flex items-center justify-center overflow-hidden">
+            <div className="absolute top-0 w-full h-1 bg-blue-400 animate-bounce"></div>
+            <User className="w-8 h-8 text-slate-500" />
           </div>
           <div>
             <p className="text-[10px] font-bold">Memindai Wajah...</p>
-            <p className="text-[8px] text-slate-400">InsightFace matching dengan IKD API (SHA-256)</p>
+            <p className="text-[8px] text-slate-500">InsightFace matching dengan IKD API (SHA-256)</p>
           </div>
         </div>
       )}
 
-      {/* KTP + Anti-Fraud Status */}
+      {/* KTP status */}
       {verified ? (
-        <div className="bg-green-50 rounded-xl p-2.5 border border-[#27AE60]/30 flex items-center space-x-3">
-          <Shield className="w-5 h-5 text-[#27AE60] shrink-0" />
+        <div className="bg-brand-500/10 rounded-xl p-2.5 border border-brand-500/20 flex items-center space-x-3">
+          <Shield className="w-5 h-5 text-brand-400 shrink-0" />
           <div>
-            <p className="text-[10px] font-bold text-[#0D1B3E]">KTP & Wajah Terverifikasi IKD ✓</p>
-            <p className="text-[8px] text-slate-500">NIK: 3204-****-****-3847 (SHA-256 Hash)</p>
+            <p className="text-[10px] font-bold text-slate-100">KTP & Wajah Terverifikasi IKD ✓</p>
+            <p className="text-[8px] text-slate-500 font-data">NIK: 3204-****-****-3847 (SHA-256)</p>
           </div>
         </div>
       ) : (
         !isVerifying && (
-          <div className="bg-slate-50 rounded-xl p-3 border border-slate-200 text-center space-y-2">
-            <ShieldAlert className="w-6 h-6 text-slate-400 mx-auto" />
-            <p className="text-[10px] font-bold text-[#0D1B3E]">Verifikasi Wajah IKD Diperlukan</p>
-            <p className="text-[8px] text-slate-500 leading-tight">Untuk keamanan pelaporan dan verifikasi sasaran bansos, Anda wajib mencocokkan biometrik wajah dengan database IKD Dukcapil.</p>
-            <button 
-              onClick={startVerification}
-              className="w-full py-2 bg-[#0069D9] hover:bg-[#0056b3] text-white rounded-lg text-[9px] font-bold transition-all"
-            >
+          <div className="bg-surface rounded-xl p-3 border border-white/[0.06] text-center space-y-2">
+            <ShieldAlert className="w-6 h-6 text-slate-500 mx-auto" />
+            <p className="text-[10px] font-bold text-slate-100">Verifikasi Wajah IKD Diperlukan</p>
+            <p className="text-[8px] text-slate-500 leading-tight">Untuk keamanan pelaporan & verifikasi sasaran bansos, cocokkan biometrik wajah dengan database IKD Dukcapil.</p>
+            <button onClick={startVerification} className="w-full py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-[9px] font-bold transition-all">
               Verifikasi Wajah via IKD
             </button>
           </div>
         )
       )}
 
-      {/* Anti-Collusion Warnings */}
-      <div className="bg-slate-50 rounded-xl p-2.5 border border-slate-200">
-        <p className="text-[9px] font-bold text-slate-600 uppercase tracking-wider mb-1.5">⚖️ Kebijakan Anti-Kolusi:</p>
+      {/* Anti-Collusion */}
+      <div className="bg-white/[0.03] rounded-xl p-2.5 border border-white/[0.06]">
+        <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">⚖️ Kebijakan Anti-Kolusi:</p>
         <div className="space-y-1 text-[8px] text-slate-500">
           <div className="flex items-start"><span className="mr-1">•</span>Foto duplikat antar warga = suspend 30 hari</div>
           <div className="flex items-start"><span className="mr-1">•</span>GPS mismatch berulang = reputation -15</div>
@@ -720,172 +676,134 @@ function TabProfil() {
   );
 }
 
-// --- Standalone Mobile Citizen App (for /mobile route) ---
-export function CitizenMobileApp() {
-  const [activeTab, setActiveTab] = useState<PwaTab>('tugas');
-
-  const tabs: { id: PwaTab; label: string; icon: typeof CheckCircle2 }[] = [
-    { id: 'tugas', label: 'Tugas', icon: CheckCircle2 },
-    { id: 'peta', label: 'Peta', icon: MapPin },
-    { id: 'reward', label: 'Reward', icon: Gift },
-    { id: 'profil', label: 'Profil', icon: User },
-  ];
-
+// --- Shared App Header ---
+function AppHeader({ topPad }: { topPad: string }) {
   return (
-    <div className="w-full h-dvh bg-slate-50 flex flex-col relative overflow-hidden">
-      {/* Status bar spacer */}
-      <div className="h-[env(safe-area-inset-top,0px)] bg-white shrink-0" />
-
-      {/* App Header */}
-      <div className="pb-3 pt-3 px-5 bg-white flex justify-between items-center shadow-sm relative z-40 border-b border-slate-50 shrink-0">
-        <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 rounded-lg overflow-hidden shrink-0 shadow-sm">
-            <Image src="/logo.png" alt="KAWAL RUPIAH" width={40} height={40} />
-          </div>
-          <div>
-            <p className="text-[#0D1B3E] font-bold leading-none tracking-tight">KAWAL RUPIAH</p>
-            <div className="flex items-center space-x-2 mt-1">
-              <p className="text-[10px] text-slate-500 font-medium">Citizen Mining</p>
-              <LevelBadge />
-            </div>
+    <div className={`${topPad} pb-3 px-5 bg-base flex justify-between items-center relative z-40 border-b border-white/[0.06] shrink-0`}>
+      <div className="flex items-center space-x-3">
+        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-400/20 to-gold-500/10 border border-white/10 flex items-center justify-center shrink-0">
+          <ShieldCheck className="w-5 h-5 text-brand-400" />
+        </div>
+        <div>
+          <p className="font-bold leading-none tracking-tight">
+            <span className="text-gradient-brand">KAWAL</span> <span className="text-gradient-gold">RUPIAH</span>
+          </p>
+          <div className="flex items-center space-x-2 mt-1">
+            <p className="text-[10px] text-slate-500 font-medium">Citizen Mining</p>
+            <LevelBadge />
           </div>
         </div>
-        <div className="bg-[#DFA000]/10 text-[#DFA000] px-3 py-1.5 rounded-full font-bold text-sm flex items-center border border-[#DFA000]/20">
-          <span className="mr-1">Rp</span>45.000
-        </div>
       </div>
-
-      {/* Content — scrollable */}
-      <div className="flex-1 overflow-y-auto bg-slate-50 relative pb-20">
-        {activeTab === 'tugas' && <TabTugas />}
-        {activeTab === 'peta' && <TabPeta />}
-        {activeTab === 'reward' && <TabReward />}
-        {activeTab === 'profil' && <TabProfil />}
-      </div>
-
-      {/* Bottom Navigation */}
-      <div className="fixed bottom-0 left-0 w-full bg-white border-t border-slate-100 px-4 py-3 flex justify-around items-center pb-[max(0.75rem,env(safe-area-inset-bottom))] shadow-[0_-4px_20px_rgba(13,27,62,0.05)] z-40">
-        {tabs.map(tab => {
-          const Icon = tab.icon;
-          const isActive = activeTab === tab.id;
-          return (
-            <button key={tab.id} onClick={() => setActiveTab(tab.id)} className={`flex flex-col items-center transition-colors ${isActive ? 'text-[#0069D9]' : 'text-slate-400'}`}>
-              <Icon className={`w-6 h-6 mb-1 ${isActive ? 'text-[#0069D9]' : ''}`} />
-              <span className={`text-[10px] ${isActive ? 'font-bold text-[#0069D9]' : 'font-medium'}`}>{tab.label}</span>
-              {isActive && <div className="w-1 h-1 bg-[#0069D9] rounded-full mt-0.5" />}
-            </button>
-          );
-        })}
+      <div className="bg-gold-500/10 text-gold-400 px-3 py-1.5 rounded-full font-bold text-sm flex items-center border border-gold-500/20 font-data">
+        <span className="mr-1">Rp</span>45.000
       </div>
     </div>
   );
 }
 
-// --- Main Component (Desktop dashboard phone mockup) ---
-export default function MobilePwaScreen() {
-  const [activeTab, setActiveTab] = useState<PwaTab>('tugas');
-
+// --- Bottom Nav ---
+function BottomNav({ activeTab, setActiveTab, absolute }: { activeTab: PwaTab; setActiveTab: (t: PwaTab) => void; absolute?: boolean }) {
   const tabs: { id: PwaTab; label: string; icon: typeof CheckCircle2 }[] = [
     { id: 'tugas', label: 'Tugas', icon: CheckCircle2 },
     { id: 'peta', label: 'Peta', icon: MapPin },
     { id: 'reward', label: 'Reward', icon: Gift },
     { id: 'profil', label: 'Profil', icon: User },
   ];
+  return (
+    <div className={`${absolute ? 'absolute pb-8' : 'fixed pb-[max(0.75rem,env(safe-area-inset-bottom))]'} bottom-0 left-0 w-full bg-base/95 backdrop-blur-md border-t border-white/[0.06] px-4 py-3 flex justify-around items-center z-40`}>
+      {tabs.map(tab => {
+        const Icon = tab.icon;
+        const isActive = activeTab === tab.id;
+        return (
+          <button key={tab.id} onClick={() => setActiveTab(tab.id)} className={`flex flex-col items-center transition-colors ${isActive ? 'text-brand-400' : 'text-slate-500'}`}>
+            <Icon className="w-6 h-6 mb-1" />
+            <span className={`text-[10px] ${isActive ? 'font-bold' : 'font-medium'}`}>{tab.label}</span>
+            {isActive && <div className="w-1 h-1 bg-brand-400 rounded-full mt-0.5" />}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+// --- Standalone Mobile Citizen App (/mobile route) ---
+export function CitizenMobileApp() {
+  const [activeTab, setActiveTab] = useState<PwaTab>('tugas');
+
+  return (
+    <div className="w-full h-dvh bg-void flex flex-col relative overflow-hidden text-slate-100">
+      <div className="h-[env(safe-area-inset-top,0px)] bg-base shrink-0" />
+      <AppHeader topPad="pt-3" />
+      <div className="flex-1 overflow-y-auto relative pb-20 custom-scrollbar">
+        {activeTab === 'tugas' && <TabTugas />}
+        {activeTab === 'peta' && <TabPeta />}
+        {activeTab === 'reward' && <TabReward />}
+        {activeTab === 'profil' && <TabProfil />}
+      </div>
+      <BottomNav activeTab={activeTab} setActiveTab={setActiveTab} />
+    </div>
+  );
+}
+
+// --- Desktop dashboard phone mockup ---
+export default function MobilePwaScreen() {
+  const [activeTab, setActiveTab] = useState<PwaTab>('tugas');
 
   return (
     <div className="flex flex-col lg:flex-row items-center justify-center pb-20 mt-4 gap-10">
-      {/* Phone container */}
-      <div className="w-[390px] h-[844px] bg-slate-50 border-[12px] border-[#0D1B3E] rounded-[3rem] shadow-2xl relative overflow-hidden flex flex-col shrink-0">
-        {/* Dynamic Island */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-[#0D1B3E] rounded-b-2xl z-50"></div>
-
-        {/* App Header */}
-        <div className="pt-12 pb-3 px-5 bg-white flex justify-between items-center shadow-sm relative z-40 border-b border-slate-50">
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-lg overflow-hidden shrink-0 shadow-sm">
-              <Image src="/logo.png" alt="KAWAL RUPIAH" width={40} height={40} />
-            </div>
-            <div>
-              <p className="text-[#0D1B3E] font-bold leading-none tracking-tight">KAWAL RUPIAH</p>
-              <div className="flex items-center space-x-2 mt-1">
-                <p className="text-[10px] text-slate-500 font-medium">Citizen Mining</p>
-                <LevelBadge />
-              </div>
-            </div>
-          </div>
-          <div className="bg-[#DFA000]/10 text-[#DFA000] px-3 py-1.5 rounded-full font-bold text-sm flex items-center border border-[#DFA000]/20">
-            <span className="mr-1">Rp</span>45.000
-          </div>
-        </div>
-
-        {/* Content — scrollable */}
-        <div className="flex-1 overflow-y-auto bg-slate-50 relative pb-24 custom-scrollbar">
+      {/* Phone */}
+      <div className="w-[390px] max-w-full h-[844px] bg-void border-[12px] border-slate-800 rounded-[3rem] shadow-2xl relative overflow-hidden flex flex-col shrink-0 text-slate-100 glow-emerald">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-slate-800 rounded-b-2xl z-50"></div>
+        <AppHeader topPad="pt-12" />
+        <div className="flex-1 overflow-y-auto relative pb-24 custom-scrollbar">
           {activeTab === 'tugas' && <TabTugas />}
           {activeTab === 'peta' && <TabPeta />}
           {activeTab === 'reward' && <TabReward />}
           {activeTab === 'profil' && <TabProfil />}
         </div>
-
-        {/* Bottom Navigation */}
-        <div className="absolute bottom-0 left-0 w-full bg-white border-t border-slate-100 px-4 py-3 flex justify-around items-center pb-8 shadow-[0_-4px_20px_rgba(13,27,62,0.05)] z-40">
-          {tabs.map(tab => {
-            const Icon = tab.icon;
-            const isActive = activeTab === tab.id;
-            return (
-              <button key={tab.id} onClick={() => setActiveTab(tab.id)} className={`flex flex-col items-center transition-colors ${isActive ? 'text-[#0069D9]' : 'text-slate-400'}`}>
-                <Icon className={`w-6 h-6 mb-1 ${isActive ? 'text-[#0069D9]' : ''}`} />
-                <span className={`text-[10px] ${isActive ? 'font-bold text-[#0069D9]' : 'font-medium'}`}>{tab.label}</span>
-                {isActive && <div className="w-1 h-1 bg-[#0069D9] rounded-full mt-0.5" />}
-              </button>
-            );
-          })}
-        </div>
+        <BottomNav activeTab={activeTab} setActiveTab={setActiveTab} absolute />
       </div>
 
-      {/* Decorative sidebar text */}
+      {/* Decorative sidebar */}
       <div className="w-80 p-4 hidden xl:block">
-        <h2 className="text-3xl font-extrabold text-[#0D1B3E] mb-4">Citizen Mining PWA</h2>
-        <p className="text-slate-500 leading-relaxed mb-4 font-medium">Ubah pengawasan pemerintah menjadi <strong>micro-tasks</strong> masal dengan <strong>anti-kolusi berlapis</strong>.</p>
-        
-        {/* Road Map Todo Note for Android APK */}
-        <div className="bg-amber-50 border border-amber-200 rounded-xl p-3.5 mb-6 text-xs leading-normal">
-          <p className="font-bold text-[#DFA000] mb-1 flex items-center">
+        <h2 className="text-3xl font-extrabold text-slate-50 mb-4">Citizen Mining PWA</h2>
+        <p className="text-slate-400 leading-relaxed mb-4 font-medium">Ubah pengawasan pemerintah menjadi <strong className="text-slate-200">micro-tasks</strong> masal dengan <strong className="text-slate-200">anti-kolusi berlapis</strong>.</p>
+
+        <div className="bg-gold-500/[0.07] border border-gold-500/20 rounded-xl p-3.5 mb-6 text-xs leading-normal">
+          <p className="font-bold text-gold-400 mb-1 flex items-center">
             <Clock className="w-3.5 h-3.5 mr-1" /> Road Map: Android APK Native
           </p>
-          <p className="text-slate-600 text-[10px] leading-relaxed">
-            Build native Android (.apk) menggunakan Capacitor sedang disiapkan untuk pengujian offline-first SQLite kamera luring tingkat lanjut. Akses saat ini berjalan penuh via PWA Vercel.
+          <p className="text-slate-400 text-[10px] leading-relaxed">
+            Build native Android (.apk) via Capacitor sedang disiapkan untuk offline-first SQLite kamera luring lanjutan. Akses saat ini berjalan penuh via PWA Vercel.
           </p>
         </div>
-        
-        {/* Anti-Collusion Layers */}
+
         <div className="space-y-2 mb-6">
-          <div className="flex items-center text-xs font-bold text-[#0D1B3E] bg-white px-3 py-2.5 rounded-xl shadow-sm border border-slate-100">
-            <div className="w-7 h-7 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center mr-2.5"><Shuffle className="w-3.5 h-3.5"/></div>
-            Random Assignment
-          </div>
-          <div className="flex items-center text-xs font-bold text-[#0D1B3E] bg-white px-3 py-2.5 rounded-xl shadow-sm border border-slate-100">
-            <div className="w-7 h-7 rounded-full bg-blue-50 text-[#0069D9] flex items-center justify-center mr-2.5"><MapPin className="w-3.5 h-3.5"/></div>
-            Geographic Separation
-          </div>
-          <div className="flex items-center text-xs font-bold text-[#0D1B3E] bg-white px-3 py-2.5 rounded-xl shadow-sm border border-slate-100">
-            <div className="w-7 h-7 rounded-full bg-amber-50 text-[#DFA000] flex items-center justify-center mr-2.5"><ImageIcon className="w-3.5 h-3.5"/></div>
-            AI Photo Forensics
-          </div>
-          <div className="flex items-center text-xs font-bold text-[#0D1B3E] bg-white px-3 py-2.5 rounded-xl shadow-sm border border-slate-100">
-            <div className="w-7 h-7 rounded-full bg-green-50 text-[#27AE60] flex items-center justify-center mr-2.5"><Shield className="w-3.5 h-3.5"/></div>
-            Reputation Score
-          </div>
+          {[
+            { icon: Shuffle, label: "Random Assignment", c: "text-purple-400 bg-purple-500/10" },
+            { icon: MapPin, label: "Geographic Separation", c: "text-blue-400 bg-blue-500/10" },
+            { icon: ImageIcon, label: "AI Photo Forensics", c: "text-gold-400 bg-gold-500/10" },
+            { icon: Shield, label: "Reputation Score", c: "text-brand-400 bg-brand-500/10" },
+          ].map(({ icon: Icon, label, c }) => (
+            <div key={label} className="flex items-center text-xs font-bold text-slate-200 bg-surface px-3 py-2.5 rounded-xl border border-white/[0.06]">
+              <div className={`w-7 h-7 rounded-full flex items-center justify-center mr-2.5 ${c}`}><Icon className="w-3.5 h-3.5" /></div>
+              {label}
+            </div>
+          ))}
         </div>
 
-        {/* Anti-Collusion flow */}
-        <div className="bg-white rounded-xl p-4 border border-slate-100 shadow-sm">
-          <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-3">🛡️ Anti-Kolusi Pipeline:</p>
-          <div className="space-y-2 text-xs text-slate-600">
-            <div className="flex items-center"><div className="w-6 h-6 bg-purple-50 text-purple-600 rounded-full flex items-center justify-center mr-2 text-[10px] font-bold">1</div>Random assign dari kecamatan berbeda</div>
-            <div className="flex items-center"><div className="w-6 h-6 bg-blue-50 text-[#0069D9] rounded-full flex items-center justify-center mr-2 text-[10px] font-bold">2</div>Warga isi checklist + foto wajib</div>
-            <div className="flex items-center"><div className="w-6 h-6 bg-amber-50 text-[#DFA000] rounded-full flex items-center justify-center mr-2 text-[10px] font-bold">3</div>AI: pHash, EXIF, GPS, outlier detect</div>
-            <div className="flex items-center"><div className="w-6 h-6 bg-green-50 text-[#27AE60] rounded-full flex items-center justify-center mr-2 text-[10px] font-bold">4</div>Konsensus 3-11 warga → DLT</div>
-            <div className="flex items-center"><div className="w-6 h-6 bg-[#C0392B]/10 text-[#C0392B] rounded-full flex items-center justify-center mr-2 text-[10px] font-bold">5</div>Curang? Stake hangus + suspend</div>
+        <div className="bg-surface rounded-xl p-4 border border-white/[0.06]">
+          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-3">🛡️ Anti-Kolusi Pipeline:</p>
+          <div className="space-y-2 text-xs text-slate-400">
+            {[
+              ["1", "Random assign dari kecamatan berbeda", "text-purple-400 bg-purple-500/10"],
+              ["2", "Warga isi checklist + foto wajib", "text-blue-400 bg-blue-500/10"],
+              ["3", "AI: pHash, EXIF, GPS, outlier detect", "text-gold-400 bg-gold-500/10"],
+              ["4", "Konsensus 3-11 warga → DLT", "text-brand-400 bg-brand-500/10"],
+              ["5", "Curang? Stake hangus + suspend", "text-red-400 bg-red-500/10"],
+            ].map(([n, t, c]) => (
+              <div key={n} className="flex items-center"><div className={`w-6 h-6 rounded-full flex items-center justify-center mr-2 text-[10px] font-bold ${c}`}>{n}</div>{t}</div>
+            ))}
           </div>
         </div>
       </div>

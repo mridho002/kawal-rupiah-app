@@ -1,12 +1,12 @@
 import type { Metadata, Viewport } from "next";
 
 export const metadata: Metadata = {
-  title: "KAWAL RUPIAH — Citizen Mining",
+  title: "Kawal Rupiah — Citizen Mining",
   description: "Kawal dana publik. Verifikasi proyek pemerintah dan dapatkan reward.",
   appleWebApp: {
     capable: true,
-    statusBarStyle: "default",
-    title: "KAWAL RUPIAH",
+    statusBarStyle: "black-translucent",
+    title: "Kawal Rupiah",
   },
   formatDetection: {
     telephone: false,
@@ -19,7 +19,7 @@ export const viewport: Viewport = {
   maximumScale: 1,
   userScalable: false,
   viewportFit: "cover",
-  themeColor: "#0D1B3E",
+  themeColor: "#06080F",
 };
 
 export default function MobileLayout({
